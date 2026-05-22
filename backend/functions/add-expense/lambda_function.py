@@ -13,7 +13,6 @@ from input_sanitize import *
 def lambda_handler(event: dict) :
     # fields = json.loads(event.get('body')) for an API call
     fields = event.get('body')
-
     amount =  sanitize_amount(fields.get('amount'))
     expense_type = sanitize_type(fields.get('type'))
     date = sanitize_date(fields.get('date'))
@@ -32,5 +31,5 @@ def lambda_handler(event: dict) :
     # Save to DataBase
 
 
-event={'method':'http','body':{'type':'food','amount':'23','date':'2026-09-26','description':'N/A'}}
+event={'method':'http','body':{'type':'food','amount':'100000000  ','date':'2026-09-26','description':'N/A'}}
 lambda_handler(event)
