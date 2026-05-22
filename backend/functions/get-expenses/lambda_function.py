@@ -25,7 +25,7 @@ def retrieve_before_date(fields: dict):
 def retrieve_in_date_range(fields: dict):
     start_date = sanitize_date(fields.get('start_date'))
     end_date = sanitize_date(fields.get('end_date'))
-def retrieve_by_category(fields: dict):
+def retrieve_by_type(fields: dict):
     type = sanitize_type(fields.get('type'))
     
 def lambda_handler(event: dict):
@@ -41,5 +41,5 @@ def lambda_handler(event: dict):
         retrieve_before_date(fields)
     if(get_type == 'in_date_range'):
         retrieve_in_date_range(fields)
-    if(get_type == 'category'):
-        retrieve_by_category(fields)
+    if(get_type == 'type'):
+        retrieve_by_type(fields)

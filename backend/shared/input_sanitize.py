@@ -1,5 +1,8 @@
 from errors import *
+from datetime import datetime, date
 
+# Create functions for period, name, etc
+# Create allowable name types for entry
 def sanitize_amount(val):   
     try:
         amount = float(val)    
@@ -25,21 +28,33 @@ def sanitize_type(val):
     return val
     
 def sanitize_date(val):
+    # Date is of the form YYYY-MM-DD
     if(val == None):
         raise ValidInputError('Date is required') 
-    val = val.strip().lower()
+    val = str(val).strip() 
     # Must recheck
     if (val == None):
         raise ValidInputError('Date cannot be empty') 
-    if (len(val) > 100):
-        raise ValidInputError('Date cannot exceed 100 characters')
-    return val
+    if (len(val) > 10):
+        raise ValidInputError('Date cannot exceed 10 characters, must be in YYYY-MM-DD format')
+    try:
+        # Convert into datetime obj to see if valid
+        date_parsed = datetime.strptime(val, '%Y-%m-%d').date()
+    except :
+        raise ValidInputError('Date must be a valid date')
+    if (date_parsed > date.today()):
+        raise ValidInputError('Date cannot be in the future')
+    if (date_parsed < date(2000, 1, 1)):
+        raise ValidInputError('Date cannot be too far in the past')
+    return str(date_parsed)
 #Check dates in the future as well, import date lib
     
 
 def sanitize_description(val):
-    if(val == None or type(val)!='str'):
-            raise ValidInputError('Description must be a string') 
+    if(val == None):
+        raise ValidInputError('Description cannot be empty') 
+    if(type(val)!='str'):
+        raise ValidInputError('Description must be a string') 
     val = val.strip().lower()
     # Must recheck
     if (val == None):
