@@ -3,6 +3,8 @@ from datetime import datetime, date
 
 # Create functions for period, name, etc
 # Create allowable name types for entry
+
+
 def sanitize_amount(val):   
     try:
         amount = float(val)    
@@ -14,6 +16,8 @@ def sanitize_amount(val):
         raise ValidInputError('Amount cannot exceed 1,000,000')
     return round(amount,2)
     
+allowed_types = {'groceries', 'transport', 'utilities', 'shopping', 'housing', 'entertainment', 'luxuries', 'dining', 'any'}
+# Hardcoded types but will change when integrated with lambda
 def sanitize_type(val):
     if(val == None or type(val)!='str'):
             raise ValidInputError('Type must be a string') 
@@ -21,8 +25,10 @@ def sanitize_type(val):
     # Must recheck
     if (val == None):
         raise ValidInputError('Type cannot be empty') 
-    if (len(val) > 100):
+    if (len(val) > 100): # If user adds a custom type
         raise ValidInputError('Type cannot exceed 100 characters')
+    if (not(val in allowed_types)):
+        raise ValidInputError('Type cannot be different than allowed types')
     # Need to ensure no special characters
     # Can also have predetermined expense types(user can add them)
     return val
@@ -48,7 +54,6 @@ def sanitize_date(val):
         raise ValidInputError('Date cannot be too far in the past')
     return str(date_parsed)
 #Check dates in the future as well, import date lib
-    
 
 def sanitize_description(val):
     if(val == None):
@@ -59,7 +64,21 @@ def sanitize_description(val):
     # Must recheck
     if (val == None):
         raise ValidInputError('Description cannot be empty') 
-    if (len(val) > 500):
+    if (len(val) > 500): 
         raise ValidInputError('Description cannot exceed 500 characters')
     return val
-    
+
+allowed_periods = {'weekly', 'biweekly', 'monthly', 'quarterly', 'yearly'}
+def sanitize_period(val):
+    if(val == None):
+        raise ValidInputError('Period cannot be empty')
+    if(type(val)!='str'):
+        raise ValidInputError('Period must be a string')
+    val = val.strip().lower()
+    if(val == None):
+        raise ValidInputError('Period cannot be empty')
+    if(len(val) > 50):
+        raise ValidInputError('Period cannot be longer than 50 characters')
+    if (not(val in allowed_periods)):
+        raise ValidInputError('Period cannot be different than allowed types')
+    return val

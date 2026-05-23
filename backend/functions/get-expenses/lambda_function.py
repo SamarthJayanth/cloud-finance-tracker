@@ -27,19 +27,25 @@ def retrieve_in_date_range(fields: dict):
     end_date = sanitize_date(fields.get('end_date'))
 def retrieve_by_type(fields: dict):
     type = sanitize_type(fields.get('type'))
-    
+def retrieve_by_type_and_range(fields: dict):
+    type = sanitize_type(fields.get('type'))
+    start_date = sanitize_date(fields.get('start_date'))
+    end_date = sanitize_date(fields.get('end_date'))
 def lambda_handler(event: dict):
     fields = event.get('body')
     get_type = fields.get('type')
-    if(get_type == 'above_amount'):
-        retrieve_above_amount(fields)
-    if(get_type == 'below_amount'):
-        retrieve_below_amount(fields)
-    if(get_type == 'after_date'):
-        retrieve_after_date(fields)
-    if(get_type == 'before_date'):
-        retrieve_before_date(fields)
-    if(get_type == 'in_date_range'):
-        retrieve_in_date_range(fields)
-    if(get_type == 'type'):
-        retrieve_by_type(fields)
+    match get_type: 
+        case'above_amount':
+            retrieve_above_amount(fields)
+        case'below_amount':
+            retrieve_below_amount(fields)
+        case'after_date':
+            retrieve_after_date(fields)
+        case'before_date':
+            retrieve_before_date(fields)
+        case'in_date_range':
+            retrieve_in_date_range(fields)
+        case 'type':
+            retrieve_by_type(fields)
+        case 'type_and_in__range':
+            retrieve_by_type_and_range(fields)

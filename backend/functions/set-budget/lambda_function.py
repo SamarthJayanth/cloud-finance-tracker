@@ -1,5 +1,6 @@
 import sys
 import os
+import uuid
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../shared'))
 
@@ -12,6 +13,8 @@ def lambda_handler(event: dict):
     budget_period = sanitize_type(fields.get('period'))
     budget_type = sanitize_type(fields.get('type'))
     budget_name = sanitize_type(fields.get('name'))
+    budget_id = str(uuid.uuid4())
+    
     # Type can be for a timeframe, certain expense types, etc
     # Save to database, maybe include an id?
     
