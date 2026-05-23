@@ -18,10 +18,8 @@ def retrieve_by_date_range(fields: dict):
     start_date = sanitize_date(fields.get('start_date'))
     end_date = sanitize_date(fields.get('end_date'))
 
+earliest_date = date(2000, 1, 1)
 def retrieve_by_type(fields: dict):
     type = sanitize_type(fields.get('type'))
-
-def retrieve_by_type_and_date_range(fields: dict):
-    type = sanitize_type(fields.get('type'))
-    start_date = sanitize_date(fields.get('start_date'))
-    end_date = sanitize_date(fields.get('end_date'))
+    start_date = sanitize_date(fields.get('start_date')) if fields.get('start_date') else earliest_date
+    end_date = sanitize_date(fields.get('end_date')) if fields.get('end_date') else date.today()

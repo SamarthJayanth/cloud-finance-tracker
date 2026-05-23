@@ -12,7 +12,7 @@ def lambda_handler(event: dict):
     budget_date = sanitize_date(fields.get('date'))
     budget_period = sanitize_type(fields.get('period'))
     budget_type = sanitize_type(fields.get('type'))
-    budget_name = sanitize_type(fields.get('name'))
+    budget_name = sanitize_type(fields.get('name')) # Fix name
     budget_id = str(uuid.uuid4())
     
     # Type can be for a timeframe, certain expense types, etc

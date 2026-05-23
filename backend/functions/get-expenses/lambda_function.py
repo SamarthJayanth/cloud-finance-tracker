@@ -12,8 +12,6 @@ def lambda_handler(event: dict):
     match get_type: 
         case 'all':
             retrieve_all(fields)
-        case 'type_and_by_date_range':
-            retrieve_by_type_and_date_range(fields)
         case'by_date_range':
             retrieve_by_date_range(fields)
         case 'type':
