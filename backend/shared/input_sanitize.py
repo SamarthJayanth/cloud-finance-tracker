@@ -32,7 +32,20 @@ def sanitize_type(val):
     # Need to ensure no special characters
     # Can also have predetermined expense types(user can add them)
     return val
-    
+
+def sanitize_name(val):
+    if(val == None or type(val)!='str'):
+            raise ValidInputError('Name must be a string') 
+    val = val.strip().lower()
+    # Must recheck
+    if (val == None):
+        raise ValidInputError('Name cannot be empty') 
+    if (len(val) > 100): # If user adds a custom type
+        raise ValidInputError('Name cannot exceed 100 characters')
+    # Need to ensure no special characters
+    # Can also have predetermined expense names(user can add them)
+    return val
+
 def sanitize_date(val):
     # Date is of the form YYYY-MM-DD
     if(val == None):

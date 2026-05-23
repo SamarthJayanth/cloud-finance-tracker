@@ -10,7 +10,7 @@ from input_sanitize import *
 def lambda_handler(event: dict):
     fields = event.get('body')
     budget_id = fields.get('id')
-
+    
     # retrieve budget from database
     # Placeholder
     budget = {'id':'abcs-43de-32co','type':'groceries','period':'monthly', 'amount':100, 'date':'2026-05-20','is_recurring':True}
