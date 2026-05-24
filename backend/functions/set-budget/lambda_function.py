@@ -19,7 +19,7 @@ def lambda_handler(event: dict):
     #       'date': 'YYYY-MM-DD' 
     #       'name': 'str'
     #       'period': 'str' one of allotted types
-    #     
+    #       'is_recurring': 'bool'
     #    }
     #  } 
     fields = event.get('body')
@@ -30,7 +30,7 @@ def lambda_handler(event: dict):
     budget_type = sanitize_type(fields.get('type'))
     budget_name = sanitize_name(fields.get('name')) # Fix name
     budget_id = str(uuid.uuid4())
-    
+    budget_is_recurring = sanitize_recurring(fields.get('is_recurring'))
     # Type can be for a timeframe, certain expense types, etc
     # Save to database, maybe include an id?
     

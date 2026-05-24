@@ -35,10 +35,6 @@ def lambda_handler(event: dict):
     budget['period'] = sanitize_period(fields.get('period'))
     budget['type'] = sanitize_type(fields.get('type'))
     budget['date'] = sanitize_date(fields.get('date'))
-    if(type(bool(is_recurring))!= bool):
-        raise ValidInputError('Recurrence must be set to true or false')
-    else:
-        budget['is_recurring'] = bool(fields.get('is_recurring'))
-
+    budget_is_recurring = sanitize_recurring(fields.get('is_recurring'))
     # Save to database
 

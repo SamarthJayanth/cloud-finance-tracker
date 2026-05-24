@@ -95,3 +95,8 @@ def sanitize_period(val):
     if (not(val in allowed_periods)):
         raise ValidInputError('Period cannot be different than allowed types')
     return val
+def sanitize_recurring(val):
+    if(type(bool(val))!= bool):
+        raise ValidInputError('Recurrence must be set to true or false')
+    else:
+        return bool(val)
