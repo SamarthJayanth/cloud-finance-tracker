@@ -7,7 +7,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '../../shared'))
 from input_sanitize import *
 sys.path.append(os.path.join(os.path.dirname(__file__), '../get_expenses'))
 from expense_queries import retrieve_by_type, retrieve_by_type_and_range
-
+from get_expenses import *
 def lambda_handler(event: dict):
     fields = event.get('body')
     budget_id = fields.get('id')
@@ -73,3 +73,4 @@ def lambda_handler(event: dict):
                     raise ValidInputError('Budget is set too far back')
                 else:
                     end_date = start_date + relativedelta(years = delta_time) - timedelta(days = 1)
+    
