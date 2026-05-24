@@ -9,6 +9,18 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '../get_expenses'))
 from expense_queries import retrieve_by_type, retrieve_by_type_and_range
 from get_expenses import *
 def lambda_handler(event: dict):
+    # Receives a budget and determines certain statistics
+    # Ensures it is a valid budget, then determines the following:
+    # How much is spent/remaining, how many days elpased/remain, etc
+    # Arguments:
+    # event = 
+    # {
+    #    miscellaneous
+    # body = 
+    #   {
+    #       'id' : 'str'
+    #    }
+    #  } 
     fields = event.get('body')
     budget_id = fields.get('id')
 

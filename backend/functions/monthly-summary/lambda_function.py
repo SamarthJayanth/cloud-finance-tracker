@@ -3,6 +3,16 @@ import os
 from datetime import date, datetime, timedelta
 
 def lambda_handler(event: dict):
+    # Returns a report of all expenses in the month
+    # Maybe customize to be for any specific month
+    # Arguments:
+    # event = 
+    # {
+    #    miscellaneous
+    # body = 
+    #   {
+    #    }
+    #  } 
     fields = event.get('body')
     end_date = date.today()
     start_date = date.today().replace(days = 1)
@@ -10,4 +20,3 @@ def lambda_handler(event: dict):
     amount = 0
     for expense in expenses:
         amount += expense.get('amount')
-    return amount

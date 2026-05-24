@@ -11,6 +11,20 @@ from input_sanitize import *
 # Will also authenticate users
 
 def lambda_handler(event: dict) :
+    # Adds an expense to the database
+    # Arguments:
+    # event = 
+    # {
+    #    miscellaneous
+    # body = 
+    #   {
+    #       'amount' : 'num' 
+    #       'type': 'str'
+    #       'date': 'YYYY-MM-DD' default is 2000-01-01
+    #       'description': 'str'
+    #    }
+    #  } 
+
     # fields = json.loads(event.get('body')) for an API call
     fields = event.get('body')
     amount =  sanitize_amount(fields.get('amount'))

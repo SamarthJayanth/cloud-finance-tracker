@@ -6,6 +6,20 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '../../shared'))
 from input_sanitize import *
 
 def lambda_handler(event: dict):
+    # Edits a previously added expense
+    # Arguments:
+    # event = 
+    # {
+    #    miscellaneous
+    # body = 
+    #   {
+    #       'amount' : 'num' 
+    #       'type': 'str'
+    #       'date': 'YYYY-MM-DD'
+    #       'description': 'str'
+    #       'id': 'str'
+    #    }
+    #  } 
     # fields = json.loads(event.get('body')) for an API call
     fields = event.get('body')
 

@@ -7,6 +7,20 @@ from input_sanitize import *
 from expense_queries import *
 
 def lambda_handler(event: dict):
+    # Retrieve expenses given certain criteria
+    # By type, date range, amount range, or all expenses 
+    # Arguments:
+    # event = 
+    # {
+    #    miscellaneous
+    # body = 
+    #   {
+    #       'amount' : 'num' 
+    #       'type': 'str'
+    #       'date': 'YYYY-MM-DD' default is 2000-01-01
+    #       'description': 'str'
+    #    }
+    #  } 
     fields = event.get('body')
     get_type = fields.get('type')
     match get_type: 
@@ -20,3 +34,5 @@ def lambda_handler(event: dict):
             retrieve_by_type_and_amount_range(fields)
         case 'amount_range':
             retrieve_by_amount_range(fields)
+        case _:
+            raise ValidInputError('Type of search must be one of allotted types')

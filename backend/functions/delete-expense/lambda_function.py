@@ -4,6 +4,16 @@ import sys
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../shared'))
 
 def lambda_handler(event: dict):
+    # Deletes an expense from database
+    # Arguments:
+    # event = 
+    # {
+    #    miscellaneous
+    # body = 
+    #   {
+    #       'id': 'str'
+    #    }
+    #  } 
     fields = event.get('body')
     id = fields.get('id')
     # Need id to get the actual expense id
