@@ -44,29 +44,29 @@ def get_current_period(budget: dict):
 
 def calculate_budget_status(amount_spent: float, amount_limit: float,
                             start_date, end_date) -> dict:
-    """
-    Calculates spending statistics for a budget.
+    
+    # Calculates spending statistics for a budget.
 
-    Arguments:
-        amount_spent (float): total spent in current period
-        amount_limit (float): the budget limit
-        start_date (date):    start of current period
-        end_date (date):      end of current period
+    # Arguments:
+    #     amount_spent (float): total spent in current period
+    #     amount_limit (float): the budget limit
+    #     start_date (date):    start of current period
+    #     end_date (date):      end of current period
 
-    Returns:
-        dict: {
-            'amount_spent':     float,
-            'amount_remaining': float,
-            'amount_limit':     float,
-            'percentage_used':  float,
-            'days_elapsed':     int,
-            'days_remaining':   int,
-            'days_total':       int,
-            'daily_average':    float,
-            'projected_total':  float,
-            'status':           str, 'on_track' / 'warning' / 'exceeded'
-        }
-    """
+    # Returns:
+    #     dict: {
+    #         'amount_spent':     float,
+    #         'amount_remaining': float,
+    #         'amount_limit':     float,
+    #         'percentage_used':  float,
+    #         'days_elapsed':     int,
+    #         'days_remaining':   int,
+    #         'days_total':       int,
+    #         'daily_average':    float,
+    #         'projected_total':  float,
+    #         'status':           str, 'on_track' / 'warning' / 'exceeded'
+    #     }
+    
     today = date.today()
     days_total = (end_date - start_date).days + 1
     days_elapsed = (today - start_date).days + 1

@@ -5,9 +5,8 @@ from dateutil.relativedelta import relativedelta
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../shared'))
 from input_sanitize import *
-sys.path.append(os.path.join(os.path.dirname(__file__), '../get_expenses'))
 from expense_queries import retrieve_by_type, retrieve_by_type_and_range
-from get_expenses import *
+from budget_utils import *
 def lambda_handler(event: dict):
     # Receives a budget and determines certain statistics
     # Ensures it is a valid budget, then determines the following:
@@ -28,5 +27,11 @@ def lambda_handler(event: dict):
     # placeholder here to simulate retrieval
     budget = {'id':'abcs-43de-32co','type':'groceries','period':'monthly', 'amount':100, 'date':'2026-05-20','is_recurring':True}
     start_date, end_date = get_current_period(budget)
-    delta_time = 0
+    if (budget.get('type')=='any'):
+        expenses = retrieve_by_date_range({'start_date':start_date,'end_date':end_date})
+    else:
+        expenses = retrieve_by_type({'start_date':start_date,'end_date':end_date,'type':(budget.get('type'))})
+    amount_spent = sum(exp.get('amount', 0) for exp in expenses)
+
+    status = calculate_budget_status(amount_spent, budget.get('amount'), start_date, end_date)
     
