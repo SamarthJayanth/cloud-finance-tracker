@@ -3,11 +3,10 @@ import os
 
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../shared'))
-sys.path.append(os.path.join(os.path.dirname(__file__), '../functions/daily-average'))
+from budget_utils import *
 from input_sanitize import *
 from expense_queries import *
-from daily-average import * 
-from get-budget-status import *
+
 
 def lambda_handler(event: dict):
     # Notifies if 80% of any budget has been used
