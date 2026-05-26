@@ -8,7 +8,7 @@ from datetime import datetime, date
 def sanitize_amount(val):   
     try:
         amount = float(val)    
-    except (ValueError or TypeError):
+    except (ValueError, TypeError):
         raise ValidInputError('Amount must be a number')
     if(amount < 0):
         raise ValidInputError('Amount must be positive')
@@ -19,12 +19,11 @@ def sanitize_amount(val):
 allowed_types = {'groceries', 'transport', 'utilities', 'shopping', 'housing', 'entertainment', 'luxuries', 'dining', 'any'}
 # Hardcoded types but will change when integrated with lambda
 def sanitize_type(val):
-    if(val == None or type(val)!='str'):
-            raise ValidInputError('Type must be a string') 
-    val = val.strip().lower()
-    # Must recheck
-    if (val == None):
+    if(val == None):
         raise ValidInputError('Type cannot be empty') 
+    if(not (isinstance(val, str))):
+        raise ValidInputError('Type must be a string') 
+    val = val.strip().lower()
     if (len(val) > 100): # If user adds a custom type
         raise ValidInputError('Type cannot exceed 100 characters')
     if (not(val in allowed_types)):
@@ -34,12 +33,12 @@ def sanitize_type(val):
     return val
 
 def sanitize_name(val):
-    if(val == None or type(val)!='str'):
+    
+    if(val == None):
+        raise ValidInputError('Name cannot be empty') 
+    if(not isinstance(val, str)):
             raise ValidInputError('Name must be a string') 
     val = val.strip().lower()
-    # Must recheck
-    if (val == None):
-        raise ValidInputError('Name cannot be empty') 
     if (len(val) > 100): # If user adds a custom type
         raise ValidInputError('Name cannot exceed 100 characters')
     # Need to ensure no special characters
@@ -52,8 +51,6 @@ def sanitize_date(val):
         raise ValidInputError('Date is required') 
     val = str(val).strip() 
     # Must recheck
-    if (val == None):
-        raise ValidInputError('Date cannot be empty') 
     if (len(val) > 10):
         raise ValidInputError('Date cannot exceed 10 characters, must be in YYYY-MM-DD format')
     try:
@@ -71,7 +68,7 @@ def sanitize_date(val):
 def sanitize_description(val):
     if(val == None):
         raise ValidInputError('Description cannot be empty') 
-    if(type(val)!='str'):
+    if(not isinstance(val, str)):
         raise ValidInputError('Description must be a string') 
     val = val.strip().lower()
     # Must recheck
@@ -85,7 +82,7 @@ allowed_periods = {'weekly', 'biweekly', 'monthly', 'quarterly', 'yearly'}
 def sanitize_period(val):
     if(val == None):
         raise ValidInputError('Period cannot be empty')
-    if(type(val)!='str'):
+    if(not isinstance(val, str)):
         raise ValidInputError('Period must be a string')
     val = val.strip().lower()
     if(val == None):
@@ -96,7 +93,7 @@ def sanitize_period(val):
         raise ValidInputError('Period cannot be different than allowed types')
     return val
 def sanitize_recurring(val):
-    if(type(bool(val))!= bool):
+    if(not isinstance(val, bool)):
         raise ValidInputError('Recurrence must be set to true or false')
     else:
         return bool(val)

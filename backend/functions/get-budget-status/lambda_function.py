@@ -34,4 +34,13 @@ def lambda_handler(event: dict):
     amount_spent = sum(exp.get('amount', 0) for exp in expenses)
 
     status = calculate_budget_status(amount_spent, budget.get('amount'), start_date, end_date)
-    
+    return {
+            'body': {
+                'budget_id':   budget_id,
+                'budget_name': budget.get('name'),
+                'period':      budget.get('period'),
+                'start_date':  str(start_date),
+                'end_date':    str(end_date),
+                **status
+            }
+    }

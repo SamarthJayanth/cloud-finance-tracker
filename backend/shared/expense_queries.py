@@ -12,8 +12,8 @@ def retrieve_all(fields: dict):
 def retrieve_by_type_and_amount_range(fields: dict):
     pass
 def retrieve_by_amount_range(fields: dict):
-    amount = sanitize_amount(fields.get('amount'))
-
+    min_amount = sanitize_amount(fields.get('min_amount'))
+    max_amount = sanitize_amount(fields.get('max_amount'))
 def retrieve_by_date_range(fields: dict):
     start_date = sanitize_date(fields.get('start_date'))
     end_date = sanitize_date(fields.get('end_date'))
