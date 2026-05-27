@@ -77,7 +77,7 @@ def calculate_budget_status(amount_spent: float, amount_limit: float,
     percentage_used = (amount_spent / amount_limit) * 100 if amount_limit > 0 else 0
     daily_average = amount_spent / days_elapsed if days_elapsed > 0 else 0
     projected_total = daily_average * days_total
-
+    daily_recommended = amount_limit / days_total
     if amount_spent >= amount_limit:
         status = 'exceeded'
     elif percentage_used >= 80 or projected_total > amount_limit:
@@ -93,6 +93,7 @@ def calculate_budget_status(amount_spent: float, amount_limit: float,
         'days_elapsed':     days_elapsed,
         'days_remaining':   days_remaining,
         'days_total':       days_total,
+        'daily_recommend':  round(daily_recommended, 2),
         'daily_average':    round(daily_average, 2),
         'projected_total':  round(projected_total, 2),
         'status':           status

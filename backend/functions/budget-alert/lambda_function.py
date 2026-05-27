@@ -27,4 +27,7 @@ def lambda_handler(event: dict):
     for budget in all_budgets:
         # Call budget-status
         # Check amounts returned
-        pass
+        if (budget.get('percentage_used') >= 0.8):
+            pass #Send alert
+        elif (budget.get('daily_recommended') > budget.get('daily_average')):
+            pass #Send alert

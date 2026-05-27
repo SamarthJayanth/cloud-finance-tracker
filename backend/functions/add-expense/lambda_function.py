@@ -22,6 +22,7 @@ def lambda_handler(event: dict) :
     #       'type': 'str'
     #       'date': 'YYYY-MM-DD' default is 2000-01-01
     #       'description': 'str'
+    #       'name': 'str'
     #    }
     #  } 
 
@@ -31,19 +32,15 @@ def lambda_handler(event: dict) :
     expense_type = sanitize_type(fields.get('type'))
     date = sanitize_date(fields.get('date'))
     description = sanitize_description(fields.get('description'))
-    id = str(uuid.uuid4())
-
+    expense_id = str(uuid.uuid4())
+    name = sanitize_name(fields.get('name'))
     expense = {
+        'name': name,
         'amount':amount,
         'type':expense_type,
         'date':date,
         'description':description,
-        'id':id
+        'id': expense_id
     }
 
-    print(expense)
     # Save to DataBase
-
-
-event={'method':'http','body':{'type':'food','amount':'100000000  ','date':'2026-09-26','description':'N/A'}}
-lambda_handler(event)

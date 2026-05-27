@@ -50,7 +50,6 @@ def sanitize_date(val):
     if(val == None):
         raise ValidInputError('Date is required') 
     val = str(val).strip() 
-    # Must recheck
     if (len(val) > 10):
         raise ValidInputError('Date cannot exceed 10 characters, must be in YYYY-MM-DD format')
     try:
@@ -71,22 +70,19 @@ def sanitize_description(val):
     if(not isinstance(val, str)):
         raise ValidInputError('Description must be a string') 
     val = val.strip().lower()
-    # Must recheck
-    if (val == None):
-        raise ValidInputError('Description cannot be empty') 
     if (len(val) > 500): 
         raise ValidInputError('Description cannot exceed 500 characters')
     return val
 
-allowed_periods = {'weekly', 'biweekly', 'monthly', 'quarterly', 'yearly'}
-def sanitize_period(val):
+allowed_budget_periods = {'weekly', 'biweekly', 'monthly', 'quarterly', 'yearly'}
+allowed_income_periods = {'one-time', 'weekly', 'biweekly', 'monthly', 'quarterly', 'yearly'}
+# Since income can be one time, is has no delta time, so we use default parameter here to fix this issue
+def sanitize_period(val, allowed_periods = allowed_budget_periods):
     if(val == None):
         raise ValidInputError('Period cannot be empty')
     if(not isinstance(val, str)):
         raise ValidInputError('Period must be a string')
     val = val.strip().lower()
-    if(val == None):
-        raise ValidInputError('Period cannot be empty')
     if(len(val) > 50):
         raise ValidInputError('Period cannot be longer than 50 characters')
     if (not(val in allowed_periods)):
