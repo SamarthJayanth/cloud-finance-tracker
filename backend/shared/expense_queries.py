@@ -17,6 +17,7 @@ def retrieve_by_amount_range(fields: dict):
 def retrieve_by_date_range(fields: dict):
     start_date = sanitize_date(fields.get('start_date'))
     end_date = sanitize_date(fields.get('end_date'))
+    return 2
 
 earliest_date = date(2000, 1, 1)
 def retrieve_by_type(fields: dict):

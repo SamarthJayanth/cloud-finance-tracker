@@ -31,7 +31,7 @@ def lambda_handler(event: dict):
         expenses = retrieve_by_date_range({'start_date':start_date,'end_date':end_date})
     else:
         expenses = retrieve_by_type({'start_date':start_date,'end_date':end_date,'type':(budget.get('type'))})
-    amount_spent = sum(exp.get('amount', 0) for exp in expenses)
+    amount_spent = sum(exp.get('amount', 0) for exp in expenses) # defaults to 0 instead of None
 
     status = calculate_budget_status(amount_spent, budget.get('amount'), start_date, end_date)
     return {

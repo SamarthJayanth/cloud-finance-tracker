@@ -2,7 +2,7 @@ from datetime import datetime, date, timedelta
 from dateutil.relativedelta import relativedelta
 
 
-allowed_periods = {'weekly': {'delta_time': 1, 'which_time': 'weeks'},
+all_period_config = {'weekly': {'delta_time': 1, 'which_time': 'weeks'},
                     'biweekly': {'delta_time': 2, 'which_time': 'weeks'}, 
                     'monthly': {'delta_time': 1, 'which_time': 'months'}, 
                     'quarterly': {'delta_time': 3, 'which_time': 'months'}, 
@@ -17,16 +17,18 @@ def get_period_delta(which_time, delta_time):
             return relativedelta(months = delta_time)
         case 'years':
             return relativedelta(years = delta_time)
+        case _:
+            raise ValueError('Period must be an allowed period')
 
 def get_current_period(budget: dict):
     budget_period = budget.get('period')
     budget_date = budget.get('date')
     is_recurring = budget.get('is_recurring')
 
-    if budget_period not in allowed_periods:
+    if budget_period not in all_period_config:
         raise ValueError(f'Invalid budget period: {budget_period}')
 
-    period_config = allowed_periods[budget_period]
+    period_config = all_period_config.get(budget_period)
     delta = get_period_delta(period_config['which_time'],period_config['delta_time'])
 
     start_date = datetime.strptime(budget_date, '%Y-%m-%d').date()

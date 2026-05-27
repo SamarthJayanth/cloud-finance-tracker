@@ -1,2 +1,4 @@
 class ValidInputError(Exception):
-    code = 100
+    code = 1
+class ValueError(Exception):
+    code = 2
