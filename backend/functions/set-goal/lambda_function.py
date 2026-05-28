@@ -1,5 +1,6 @@
 import sys
 import os
+import uuid
 from datetime import date, datetime
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../shared'))
@@ -17,15 +18,19 @@ def lambda_handler(event: dict):
     #   {
     #       'amount' : 'num' 
     #       'name': 'str'
-    #       'date': 'str'
+    #       'start_date': 'str'
+    #       'end_date': 'str'
     #       'period': 'str'
     #    }
     #  } 
     fields = event.get('body')
+    goal_id = str(uuid.uuid4())
     goal = {
         'amount' : sanitize_amount(fields.get('amount')),
         'name' : sanitize_name(fields.get('name')),
-        'date': sanitize_date(fields.get('date')),
-        'period': sanitize_period(fields.get('period'))
+        'start_date': sanitize_date(fields.get('start_date')),
+        'end_date': sanitize_date(fields.get('end_date')),
+        'period': sanitize_period(fields.get('period')),
+        'id': goal_id
     }
     # Save to database

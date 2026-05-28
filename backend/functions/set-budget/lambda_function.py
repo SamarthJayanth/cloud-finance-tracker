@@ -26,7 +26,7 @@ def lambda_handler(event: dict):
     # Set a budget, can choose what category to use for this budget
     budget_amount = sanitize_amount(fields.get('amount'))
     budget_date = sanitize_date(fields.get('date'))
-    budget_period = sanitize_type(fields.get('period'))
+    budget_period = sanitize_period(fields.get('period'))
     budget_type = sanitize_type(fields.get('type'))
     budget_name = sanitize_name(fields.get('name')) # Fix name
     budget_id = str(uuid.uuid4())

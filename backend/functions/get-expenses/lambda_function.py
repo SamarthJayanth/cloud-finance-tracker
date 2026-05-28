@@ -22,8 +22,8 @@ def lambda_handler(event: dict):
     #    }
     #  } 
     fields = event.get('body')
-    get_type = fields.get('type')
-    match get_type: 
+    query_type = fields.get('type')
+    match query_type: 
         case 'all':
             retrieve_all(fields)
         case'by_date_range':
