@@ -27,20 +27,34 @@ def lambda_handler(event: dict) :
     #  } 
 
     # fields = json.loads(event.get('body')) for an API call
-    fields = event.get('body')
-    amount =  sanitize_amount(fields.get('amount'))
-    expense_type = sanitize_type(fields.get('type'))
-    date = sanitize_date(fields.get('date'))
-    description = sanitize_description(fields.get('description'))
-    expense_id = str(uuid.uuid4())
-    name = sanitize_name(fields.get('name'))
-    expense = {
-        'name': name,
-        'amount':amount,
-        'type':expense_type,
-        'date':date,
-        'description':description,
-        'id': expense_id
-    }
-
+    try: 
+        fields = event.get('body')
+        amount =  sanitize_amount(fields.get('amount'))
+        expense_type = sanitize_type(fields.get('type'))
+        date = sanitize_date(fields.get('date'))
+        description = sanitize_description(fields.get('description'))
+        expense_id = str(uuid.uuid4())
+        name = sanitize_name(fields.get('name'))
+        expense = {
+            'name': name,
+            'amount':amount,
+            'type':expense_type,
+            'date':date,
+            'description':description,
+            'id': expense_id
+        }
+        #Save to Database
+        return {
+            #'statusCode'
+            'body': json.dumps({
+                'message': 'Expense added successfully',
+                'expense': expense
+            })
+        }
+    except ValidInputError as e:
+        return {'body': str(e)}
+    except DataBaseError as e:
+        return {'body': str(e)}
+    except Exception:
+        return {'body': json.dumps({'error': 'Internal Server Error'})}
     # Save to DataBase

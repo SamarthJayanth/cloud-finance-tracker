@@ -55,7 +55,7 @@ def sanitize_date(val):
     try:
         # Convert into datetime obj to see if valid
         date_parsed = datetime.strptime(val, '%Y-%m-%d').date()
-    except :
+    except ValueError:
         raise ValidInputError('Date must be a valid date')
     if (date_parsed > date.today()):
         raise ValidInputError('Date cannot be in the future')
