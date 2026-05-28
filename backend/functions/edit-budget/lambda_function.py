@@ -35,6 +35,6 @@ def lambda_handler(event: dict):
     budget['period'] = sanitize_period(fields.get('period'))
     budget['type'] = sanitize_type(fields.get('type'))
     budget['date'] = sanitize_date(fields.get('date'))
-    budget_is_recurring = sanitize_recurring(fields.get('is_recurring'))
+    budget['is_recurring'] = sanitize_recurring(fields.get('is_recurring'))
     # Save to database
 

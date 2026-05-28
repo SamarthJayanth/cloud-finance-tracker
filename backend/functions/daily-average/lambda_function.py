@@ -23,7 +23,7 @@ def lambda_handler(event: dict):
     fields = event.get('body')
     start_date = sanitize_date(fields.get('start_date'))
     end_date = sanitize_date(fields.get('end_date'))
-    expenses_type = sanitize_type(fields.get('type'))
+    expenses_type = sanitize_type(fields.get('type')) if fields.get('type') else None 
     delta_days = datetime.strptime(end_date, '%Y-%m-%d').date() - datetime.strptime(start_date, '%Y-%m-%d').date()
     if(delta_days.days < 0):
         raise ValidInputError("Start date must be before end date")
@@ -33,6 +33,5 @@ def lambda_handler(event: dict):
     for expense in expenses:
         amount += expense.get('amount')
     return round(amount/(delta_days.days + 1), 2)
-lambda_handler({'body':{'start_date':'2026-05-20','end_date':'2026-05-22'}, 'etc':9})
 
     

@@ -23,11 +23,13 @@ def lambda_handler(event: dict):
     #  }
     fields = event.get('body')
     # Retrieve all from database
-    all_budgets = {}
+    all_budgets = set()
     for budget in all_budgets:
         # Call budget-status
         # Check amounts returned
-        if (budget.get('percentage_used') >= 0.8):
-            pass #Send alert
-        elif (budget.get('daily_recommended') > budget.get('daily_average')):
+        start_date, end_date = get_current_period(budget)
+        expenses = retrieve_by_date_range({'start_date':start_date, 'end_date': end_date})
+        amount_spent = sum(exp.get('amount', 0) for exp in expenses)
+        full_status = calculate_budget_status(amount_spent, budget.get('amount', 0), start_date, end_date)
+        if (full_status.get('status') == 'warning'):
             pass #Send alert

@@ -15,7 +15,9 @@ def lambda_handler(event: dict):
     #    }
     #  } 
     fields = event.get('body')
-    id = fields.get('id')
+    expense_id = fields.get('id')
+    if not expense_id:
+        return ValueError('Id is invalid')
     # Need id to get the actual expense id
     # For proper security, we must ensure that the request is sent by an authorized user
 
