@@ -52,9 +52,9 @@ def lambda_handler(event: dict) :
             })
         }
     except ValidInputError as e:
-        return {'body': str(e)}
+        return {'body': json.dumps({'error': str(e)})}
     except DataBaseError as e:
-        return {'body': str(e)}
+        return {'body': json.dumps({'error': str(e)})}
     except Exception:
         return {'body': json.dumps({'error': 'Internal Server Error'})}
     # Save to DataBase

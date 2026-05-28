@@ -22,15 +22,20 @@ def lambda_handler(event: dict):
     #       'is_recurring': 'bool'
     #    }
     #  } 
-    fields = event.get('body')
-    # Set a budget, can choose what category to use for this budget
-    budget_amount = sanitize_amount(fields.get('amount'))
-    budget_date = sanitize_date(fields.get('date'))
-    budget_period = sanitize_period(fields.get('period'))
-    budget_type = sanitize_type(fields.get('type'))
-    budget_name = sanitize_name(fields.get('name')) # Fix name
-    budget_id = str(uuid.uuid4())
-    budget_is_recurring = sanitize_recurring(fields.get('is_recurring'))
-    # Type can be for a timeframe, certain expense types, etc
-    # Save to database, maybe include an id?
-    
+    try:
+        fields = event.get('body')
+        # Set a budget, can choose what category to use for this budget
+        budget_amount = sanitize_amount(fields.get('amount'))
+        budget_date = sanitize_date(fields.get('date'))
+        budget_period = sanitize_period(fields.get('period'))
+        budget_type = sanitize_type(fields.get('type'))
+        budget_name = sanitize_name(fields.get('name')) # Fix name
+        budget_id = str(uuid.uuid4())
+        budget_is_recurring = sanitize_recurring(fields.get('is_recurring'))
+        # Type can be for a timeframe, certain expense types, etc
+    except ValidInputError as e:
+        return {'body': json.dumps({'error': str(e)})}
+    except DataBaseError as e:
+        return {'body': json.dumps({'error': str(e)})}
+    except Exception:
+        return {'body': json.dumps({'error': 'Internal Server Error'})}
