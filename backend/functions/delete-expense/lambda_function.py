@@ -14,11 +14,18 @@ def lambda_handler(event: dict):
     #       'id': 'str'
     #    }
     #  } 
-    fields = event.get('body')
-    expense_id = fields.get('id')
-    if not expense_id:
-        return ValueError('Id is invalid')
-    # Need id to get the actual expense id
-    # For proper security, we must ensure that the request is sent by an authorized user
+    try:
+        fields = event.get('body')
+        expense_id = fields.get('id')
+        if not expense_id:
+            return ValueError('Id is invalid')
+        # Need id to get the actual expense id
+        # For proper security, we must ensure that the request is sent by an authorized user
 
-    # Remove from data base
+        # Remove from data base
+    except ValidInputError as e:
+        return {'body': json.dumps({'error': str(e)})}
+    except DataBaseError as e:
+        return {'body': json.dumps({'error': str(e)})}
+    except Exception:
+        return {'body': json.dumps({'error': 'Internal Server Error'})}

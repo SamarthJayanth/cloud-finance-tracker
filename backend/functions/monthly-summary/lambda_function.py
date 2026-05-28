@@ -17,10 +17,17 @@ def lambda_handler(event: dict):
     #   {
     #    }
     #  } 
-    fields = event.get('body')
-    end_date = date.today()
-    start_date = date.today().replace(day = 1)
-    expenses = retrieve_by_date_range({'start_date':start_date, 'end_date':end_date})
-    amount = 0
-    for expense in expenses:
-        amount += expense.get('amount')
+    try:
+        fields = event.get('body')
+        end_date = date.today()
+        start_date = date.today().replace(day = 1)
+        expenses = retrieve_by_date_range({'start_date':start_date, 'end_date':end_date})
+        amount = 0
+        for expense in expenses:
+            amount += expense.get('amount')
+    except ValidInputError as e:
+        return {'body': json.dumps({'error': str(e)})}
+    except DataBaseError as e:
+        return {'body': json.dumps({'error': str(e)})}
+    except Exception:
+        return {'body': json.dumps({'error': 'Internal Server Error'})}

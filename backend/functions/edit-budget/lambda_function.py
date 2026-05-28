@@ -24,17 +24,23 @@ def lambda_handler(event: dict):
     #       'id': 'str'
     #    }
     #  } 
-    fields = event.get('body')
-    budget_id = fields.get('id')
+    try:
+        fields = event.get('body')
+        budget_id = fields.get('id')
 
-    # retrieve budget from database
-    # Placeholder
-    budget = {'id':'abcs-43de-32co','type':'groceries','period':'monthly', 'amount':100, 'date':'2026-05-20','is_recurring':True}
-    # This sends a full request, not just the changes
-    budget['amount'] = sanitize_amount(fields.get('amount'))
-    budget['period'] = sanitize_period(fields.get('period'))
-    budget['type'] = sanitize_type(fields.get('type'))
-    budget['date'] = sanitize_date(fields.get('date'))
-    budget['is_recurring'] = sanitize_recurring(fields.get('is_recurring'))
-    # Save to database
-
+        # retrieve budget from database
+        # Placeholder
+        budget = {'id':'abcs-43de-32co','type':'groceries','period':'monthly', 'amount':100, 'date':'2026-05-20','is_recurring':True}
+        # This sends a full request, not just the changes
+        budget['amount'] = sanitize_amount(fields.get('amount'))
+        budget['period'] = sanitize_period(fields.get('period'))
+        budget['type'] = sanitize_type(fields.get('type'))
+        budget['date'] = sanitize_date(fields.get('date'))
+        budget['is_recurring'] = sanitize_recurring(fields.get('is_recurring'))
+        # Save to database
+    except ValidInputError as e:
+        return {'body': json.dumps({'error': str(e)})}
+    except DataBaseError as e:
+        return {'body': json.dumps({'error': str(e)})}
+    except Exception:
+        return {'body': json.dumps({'error': 'Internal Server Error'})}
