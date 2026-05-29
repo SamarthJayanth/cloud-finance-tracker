@@ -1,6 +1,6 @@
 import os
 import sys
-
+import json
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../shared'))
 
 def lambda_handler(event: dict):
