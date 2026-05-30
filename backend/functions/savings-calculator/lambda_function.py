@@ -25,4 +25,6 @@ def lambda_handler(event: dict, context):
     elif (start_date or end_date):
         raise ValidInputError('Both start and end date required')
     else:
-        income_items = get_all_income()
+        earliest_date = '2000-01-01'
+        income = get_total_income(earliest_date, str(date.today()))
+        
