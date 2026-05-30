@@ -1,13 +1,9 @@
 import json
 import uuid
-import sys
-import os
 import boto3
 from decimal import Decimal # DynamoDB doesn't take float values
-sys.path.append(os.path.join(os.path.dirname(__file__), '../../shared'))
-
-from input_sanitize import *
-from errors import *
+from input_sanitize import * # comes from layer automatically
+from errors import * # comes from layer automatically
 
 dynamodb = boto3.resource('dynamodb', region_name = 'us-east-2')
 table = dynamodb.Table('expense')
