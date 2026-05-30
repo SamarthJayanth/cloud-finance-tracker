@@ -29,7 +29,7 @@ def lambda_handler(event: dict):
             # Call budget-status
             # Check amounts returned
             start_date, end_date = get_current_period(budget)
-            expenses = retrieve_by_date_range({'start_date':start_date, 'end_date': end_date})
+            expenses = get_expenses_by_date_range({'start_date':start_date, 'end_date': end_date})
             amount_spent = sum(exp.get('amount', 0) for exp in expenses)
             full_status = calculate_budget_status(amount_spent, budget.get('amount', 0), start_date, end_date)
             if (full_status.get('status') == 'warning'):

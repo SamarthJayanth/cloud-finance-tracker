@@ -30,7 +30,7 @@ def lambda_handler(event: dict):
         if(delta_days.days < 0):
             raise ValidInputError("Start date must be before end date")
         
-        expenses = retrieve_by_type({'start_date': start_date, 'end_date': end_date, 'type':expenses_type})
+        expenses = get_expenses_by_type({'start_date': start_date, 'end_date': end_date, 'type':expenses_type})
         amount = 0
         for expense in expenses:
             amount += expense.get('amount')

@@ -30,9 +30,9 @@ def lambda_handler(event: dict):
         budget = {'id':'abcs-43de-32co','type':'groceries','period':'monthly', 'amount':100, 'date':'2026-05-20','is_recurring':True}
         start_date, end_date = get_current_period(budget)
         if (budget.get('type')=='any'):
-            expenses = retrieve_by_date_range({'start_date':start_date,'end_date':end_date})
+            expenses = get_expenses_by_date_range({'start_date':start_date,'end_date':end_date})
         else:
-            expenses = retrieve_by_type({'start_date':start_date,'end_date':end_date,'type':(budget.get('type'))})
+            expenses = get_expenses_by_type({'start_date':start_date,'end_date':end_date,'type':(budget.get('type'))})
         amount_spent = sum(exp.get('amount', 0) for exp in expenses) # defaults to 0 instead of None
 
         status = calculate_budget_status(amount_spent, budget.get('amount'), start_date, end_date)

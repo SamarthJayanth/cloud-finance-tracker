@@ -26,17 +26,17 @@ def lambda_handler(event: dict):
         query_type = fields.get('type')
         match query_type: 
             case 'all':
-                retrieve_all(fields)
+                get_all_expenses(fields)
             case'by_date_range':
-                retrieve_by_date_range(fields)
+                get_expenses_by_date_range(fields)
             case 'type':
-                retrieve_by_type(fields)
+                get_expenses_by_type(fields)
             case 'type_and_by_amount_range':
-                retrieve_by_type_and_amount_range(fields)
+                get_expenses_filtered(fields)
             case 'amount_range':
-                retrieve_by_amount_range(fields)
+                get_expenses_by_amount_range(fields)
             case _:
-                raise ValidInputError('Type of search must be one of allotted types')
+                raise ValidInputError('Type of expense search must be one of allotted types')
     except ValidInputError as e:
         return {'body': json.dumps({'error': str(e)})}
     except DataBaseError as e:
