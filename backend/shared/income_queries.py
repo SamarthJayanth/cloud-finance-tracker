@@ -13,3 +13,9 @@ def get_total_income(start_date: str = earliest_date, end_date: str = None,
     # Returns single sum — just calls get_expenses and sums
     items = get_income(start_date, end_date, expense_type, min_amount, max_amount)
     return sum(item.get('amount') for item in items)
+def add_income():
+    pass
+def edit_income():
+    pass
+def delete_income():
+    pass

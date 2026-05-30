@@ -1,12 +1,10 @@
 import json
 import uuid
-import boto3
 from decimal import Decimal # DynamoDB doesn't take float values
 from input_sanitize import * # comes from layer automatically
 from errors import * # comes from layer automatically
 
-dynamodb = boto3.resource('dynamodb', region_name = 'us-east-2')
-table = dynamodb.Table('expense')
+
 # event contains data from the API call
 # Will also authenticate users
 
@@ -37,18 +35,13 @@ def lambda_handler(event: dict, context) :
         name = sanitize_name(fields.get('name'))
         expense = {
             'name': name,
-            'amount': Decimal(amount),
+            'amount': Decimal(round(amount, 2)),
             'type':expense_type,
             'date':date,
             'description':description,
             'id': expense_id
         }
-        #Save to Database
-        try:
-            table.put_item(Item = expense)
-        except Exception as e:
-            print(f'DynamoDB error: {str(e)}')
-            raise DataBaseError('Failed to save expense')
+        add_expense(expense)
         return {
             'statusCode': 201,
             'body': json.dumps({
@@ -56,6 +49,19 @@ def lambda_handler(event: dict, context) :
                 'expense': expense
             })
         }
+        #Save to Database
+        # try:
+        #     table.put_item(Item = expense)
+        # except Exception as e:
+        #     print(f'DynamoDB error: {str(e)}')
+        #     raise DataBaseError('Failed to save expense')
+        # return {
+        #     'statusCode': 201,
+        #     'body': json.dumps({
+        #         'message': 'Expense added successfully',
+        #         'expense': expense
+        #     })
+        # }
     except ValidInputError as e:
         return {'body': json.dumps({'error': str(e)})}
     except DataBaseError as e:
