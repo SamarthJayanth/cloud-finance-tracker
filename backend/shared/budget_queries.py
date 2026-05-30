@@ -1,6 +1,6 @@
 def get_budget(budget_id: str) -> dict | None:
     # Fetches a single budget by ID, returns None if not found
-
+    
 
     return {}
 
