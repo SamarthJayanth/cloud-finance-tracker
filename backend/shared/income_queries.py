@@ -1,21 +1,85 @@
-from datetime import datetime, date
+import boto3
+import json
+from decimal import Decimal # DynamoDB doesn't take float values
+from datetime import date
+from input_sanitize import *
+from boto3.dynamodb.conditions import Key, Attr
+dynamodb = boto3.resource('dynamodb', region_name = 'us-east-2')
+table = dynamodb.Table('incomes')
 
 earliest_date = '2000-01-01'
-def get_income(start_date: str = earliest_date, end_date: str = None,
-                 expense_type: str = None, min_amount: float = None, max_amount: float = None):
-    # Returns list of expense records matching filters
+def get_incomes(start_date: str = earliest_date, end_date: str = None,
+                 min_amount: float = None, max_amount: float = None, period: str = None):
+    # Returns list of income records matching filters
     if end_date is None:
         end_date = str(date.today())
-    pass
+    try:
+        filter_expr = Attr('date').between(start_date, end_date)
+        if min_amount is not None: # Evaluate here because min amt could be 0
+            filter_expr = filter_expr & Attr('amount').gt(min_amount)
+        if max_amount is not None: 
+            filter_expr = filter_expr & Attr('amount').lt(max_amount)
+        if period is not None:
+            filter_expr = filter_expr & Attr('period').eq(period)
+        response = table.scan(FilterExpression = filter_expr)
+        return response.get('Items', [])
+    except Exception as e:
+        print(f'Dynamodb error: {str(e)}')
+        raise DataBaseError('Failed to get incomes')
+income_config = {'one-time' : 1, 'weekly' : 52, 'biweekly' : 26, 'monthly' : 12, 'quarterly' : 3, 'yearly' : 1}
+def get_total_yearly_income(start_date: str = earliest_date, end_date: str = None,
+                        min_amount: float = None, max_amount: float = None, period: str = None):
+    # Returns single sum — just calls get_incomes and sums
+    items = get_incomes(start_date, end_date, min_amount, max_amount, period)
+    sum_items = 0
+    for item in items:
+        sum_items = sum_items + item.get('amount')*(income_config.get(item.get('period')))
+    return sum_items
+def add_income(income: dict):
+    try:
+        table.put_item(Item = income)
+    except Exception as e:
+        print(f'DynamoDB error: {str(e)}')
+        raise DataBaseError('Failed to add income')
+def edit_income(income: dict) -> dict | None:
+    # Updates specific fields on a income
+    # Only keys present in updates are changed
+    income_id = income.pop('id')
+    try:
+        update_parts = []
+        expr_attr_names = {}
+        expr_attr_vals = {}
+        for i, k in enumerate(income.keys()):
+            update_parts.append(f'#k{i} = :v{i}')
+            expr_attr_names[f'#k{i}'] = k
+            expr_attr_vals[f':v{i}'] = income.get(k)
+        update_expr = 'SET '+' , '.join(update_parts)
+        table.update_item(
+            Key = {
+                'id': income_id
+            },
+            UpdateExpression = update_expr,
+            ExpressionAttributeNames = expr_attr_names,
+            ExpressionAttributeVals = expr_attr_vals
+        )
+    except Exception as e:
+        print(f'DynamoDB error {str(e)}')
+        raise DataBaseError('Failed to edit income')
+def delete_income(income_id: str):
+    # Deletes an income by id
+    try:
+        table.delete_item(Key = {'id': income_id})
+    except Exception as e:
+        print(f'DynamoDB error: {str(e)}')
+        raise DataBaseError('Failed to delete income')
 
-def get_total_income(start_date: str = earliest_date, end_date: str = None,
-                       expense_type: str = None, min_amount: float = None, max_amount: float = None):
-    # Returns single sum — just calls get_expenses and sums
-    items = get_income(start_date, end_date, expense_type, min_amount, max_amount)
-    return sum(item.get('amount') for item in items)
-def add_income():
-    pass
-def edit_income():
-    pass
-def delete_income():
-    pass
+def get_income_by_id(income_id: str) -> dict | None:
+    # Fetches a single income by id, returns None if not found
+    try:
+        response = table.query(KeyConditionExpression = Key('id').eq(income_id))
+        income = response.get('Items')[0] if response.get('Items') else None
+        # return from income_table
+        return income
+    except Exception as e:
+        print(f'DynamoDB error: {str(e)}')
+        raise DataBaseError('Failed to get income')
