@@ -1,12 +1,9 @@
 import json
-import sys
-import os
 import uuid
 from datetime import date, datetime
 
-sys.path.append(os.path.join(os.path.dirname(__file__), '../../shared'))
-
 from input_sanitize import *
+from errors import *
 
 def lambda_handler(event: dict):
     # Sets a goal for a user to hit 
@@ -27,11 +24,15 @@ def lambda_handler(event: dict):
     try:
         fields = event.get('body')
         goal_id = str(uuid.uuid4())
+        start_date = sanitize_date(fields.get('start_date'))
+        end_date = sanitize_date(fields.get('end_date'))
+        if (start_date > end_date):
+            raise ValidInputError('Start date cannot be ahead of the end_date')
         goal = {
             'amount' : sanitize_amount(fields.get('amount')),
             'name' : sanitize_name(fields.get('name')),
-            'start_date': sanitize_date(fields.get('start_date')),
-            'end_date': sanitize_date(fields.get('end_date')),
+            'start_date': start_date,
+            'end_date': end_date,
             'period': sanitize_period(fields.get('period')),
             'id': goal_id
         }
@@ -40,5 +41,6 @@ def lambda_handler(event: dict):
     except DataBaseError as e:
         return {'body': json.dumps({'error': str(e)})}
     except Exception:
+        print(f'Unexpected rrror: {str(e)}')
         return {'body': json.dumps({'error': 'Internal Server Error'})}
         # Save to database

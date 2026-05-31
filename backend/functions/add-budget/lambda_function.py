@@ -34,9 +34,19 @@ def lambda_handler(event: dict):
         budget_id = str(uuid.uuid4())
         budget_is_recurring = sanitize_recurring(fields.get('is_recurring'))
         # Type can be for a timeframe, certain expense types, etc
+        budget = {
+            'budget_amount' : budget_amount,
+            'budget_date' : budget_date,
+            'budget_period' : budget_period,
+            'budget_type' : budget_type,
+            'budget_name' : budget_name,
+            'budget_id' : budget_id,
+            'budget_is_recurring' : budget_is_recurring
+        }
     except ValidInputError as e:
         return {'body': json.dumps({'error': str(e)})}
     except DataBaseError as e:
         return {'body': json.dumps({'error': str(e)})}
     except Exception:
+        print(f'Unexpected rrror: {str(e)}')
         return {'body': json.dumps({'error': 'Internal Server Error'})}

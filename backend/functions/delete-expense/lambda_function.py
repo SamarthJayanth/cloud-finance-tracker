@@ -1,7 +1,4 @@
-import os
-import sys
 import json
-sys.path.append(os.path.join(os.path.dirname(__file__), '../../shared'))
 
 def lambda_handler(event: dict):
     # Deletes an expense from database
@@ -28,4 +25,5 @@ def lambda_handler(event: dict):
     except DataBaseError as e:
         return {'body': json.dumps({'error': str(e)})}
     except Exception:
+        print(f'Unexpected rrror: {str(e)}')
         return {'body': json.dumps({'error': 'Internal Server Error'})}

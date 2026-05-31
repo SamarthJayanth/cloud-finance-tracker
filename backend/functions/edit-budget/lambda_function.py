@@ -1,11 +1,8 @@
-import sys
-import os
 from datetime import datetime, date
 import json
-sys.path.append(os.path.join(os.path.dirname(__file__), '../../shared'))
 
 from input_sanitize import *
-
+from errors import *
 
 def lambda_handler(event: dict):
     # Edits the details of a previously made budget
@@ -43,4 +40,5 @@ def lambda_handler(event: dict):
     except DataBaseError as e:
         return {'body': json.dumps({'error': str(e)})}
     except Exception:
+        print(f'Unexpected rrror: {str(e)}')
         return {'body': json.dumps({'error': 'Internal Server Error'})}
