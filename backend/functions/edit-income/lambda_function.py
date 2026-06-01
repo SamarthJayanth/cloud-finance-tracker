@@ -23,22 +23,32 @@ def lambda_handler(event: dict):
     #  } 
     try:
         fields = event.get('body')
-        budget_id = fields.get('id')
+        income_id = fields.get('id')
 
-        # retrieve budget from database
-        # Placeholder
-        income = {'id':'abcs-43de-32co','name':'work','period':'monthly', 'amount':100, 'start_date':'2026-05-20','is_recurring':True, 'description': 'some'}
-        # This sends a full request, not just the changes
-        income['amount'] = sanitize_amount(fields.get('amount'))
-        income['period'] = sanitize_period(fields.get('period'))
-        income['name'] = sanitize_type(fields.get('type'))
-        income['start_date'] = sanitize_date(fields.get('date'))
-        income['is_recurring'] = sanitize_recurring(fields.get('is_recurring'))
-        # Save to database
+        income = {
+            'amount' : sanitize_amount(fields.get('amount')),
+            'period' : sanitize_period(fields.get('period')),
+            'name' : sanitize_type(fields.get('type')),
+            'start_date' : sanitize_date(fields.get('date')),
+            'is_recurring' : sanitize_recurring(fields.get('is_recurring'))
+        }
+
+        edit_income(income)
+        return {
+            'statusCode': 201,
+            'body': json.dumps({
+                'message': 'Income edited successfully',
+                'income_id': income_id
+            })
+        }
+        
+        #Save back to database
     except ValidInputError as e:
         return {'body': json.dumps({'error': str(e)})}
     except DataBaseError as e:
         return {'body': json.dumps({'error': str(e)})}
+    except NotFoundError as e:
+        return {'statusCode': 404, 'body': json.dumps({'error': str(e)})}
     except Exception:
-        print(f'Unexpected rrror: {str(e)}')
+        print(f'Unexpected error: {str(e)}')
         return {'body': json.dumps({'error': 'Internal Server Error'})}

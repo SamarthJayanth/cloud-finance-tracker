@@ -4,6 +4,8 @@ from decimal import Decimal # DynamoDB doesn't take float values
 from datetime import date
 from input_sanitize import *
 from boto3.dynamodb.conditions import Key, Attr
+from botocore.exceptions import ClientError
+
 dynamodb = boto3.resource('dynamodb', region_name = 'us-east-2')
 table = dynamodb.Table('incomes')
 
@@ -68,13 +70,19 @@ def edit_income(income: dict) -> dict | None:
             Key = {
                 'id': income_id
             },
+            ConditionExpression = Attr('id').exists(),
             UpdateExpression = update_expr,
             ExpressionAttributeNames = expr_attr_names,
             ExpressionAttributeValues = expr_attr_vals
         )
+    except ClientError as e:
+        if e.response['Error']['Code'] == 'ConditionalCheckFailedException':
+            raise NotFoundError('Income not found')
+        print(f'DynamoDB error: {str(e)}')
+        raise DataBaseError('Failed to update income')
     except Exception as e:
         print(f'DynamoDB error {str(e)}')
-        raise DataBaseError('Failed to edit income')
+        raise DataBaseError('Failed to update income')
 def delete_income(income_id: str):
     # Deletes an income by id
     try:

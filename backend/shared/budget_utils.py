@@ -22,7 +22,7 @@ def get_period_delta(which_time, delta_time):
 
 def get_current_period(budget: dict):
     budget_period = budget.get('period')
-    budget_date = budget.get('date')
+    budget_date = budget.get('start_date')
     is_recurring = budget.get('is_recurring')
 
     if budget_period not in all_period_config:

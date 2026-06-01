@@ -1,8 +1,5 @@
-import sys
-import os
 import json
 
-sys.path.append(os.path.join(os.path.dirname(__file__), '../../shared'))
 from budget_utils import *
 from input_sanitize import *
 from expense_queries import *
@@ -24,12 +21,12 @@ def lambda_handler(event: dict):
     try:
         fields = event.get('body')
         # Retrieve all from database
-        all_budgets = set()
+        all_budgets = get_budgets()
         for budget in all_budgets:
             # Call budget-status
             # Check amounts returned
             start_date, end_date = get_current_period(budget)
-            expenses = get_expenses_by_date_range({'start_date':start_date, 'end_date': end_date})
+            expenses = get_expenses(start_date = start_date, end_date = end_date)
             amount_spent = sum(exp.get('amount', 0) for exp in expenses)
             full_status = calculate_budget_status(amount_spent, budget.get('amount', 0), start_date, end_date)
             if (full_status.get('status') == 'warning'):
@@ -37,6 +34,8 @@ def lambda_handler(event: dict):
     except ValidInputError as e:
         return {'body': json.dumps({'error': str(e)})}
     except DataBaseError as e:
+        print(f'Database error: {str(e)}') 
         return {'body': json.dumps({'error': str(e)})}
-    except Exception:
+    except Exception as e:
+        print(f'Unexpected error: {str(e)}') 
         return {'body': json.dumps({'error': 'Internal Server Error'})}

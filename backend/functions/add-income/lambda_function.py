@@ -5,6 +5,7 @@ import json
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../shared'))
 
 from input_sanitize import *
+from errors import *
 def lambda_handler(event: dict):
     # Adds an income to the database
     # Arguments
@@ -23,14 +24,16 @@ def lambda_handler(event: dict):
     try:
         fields = event.get('body')
 
-        period = sanitize_period(fields.get('period')) if fields.get('period') else None
+        period = sanitize_period(fields.get('period'))
+        description = sanitize_description(fields.get('description')) if fields.get('description') else None
         income = {
             'amount': sanitize_amount(fields.get('amount')),
             'name': sanitize_name(fields.get('name')),
             'period': period,
             'id': str(uuid.uuid4()),
-            'date': sanitize_date(fields.get('date')),
-            'is_recurring': (period != 'one-time')
+            'start_date': sanitize_date(fields.get('date')),
+            'is_recurring': (period != 'one-time'),
+            'type': sanitize_type(fields.get('type'))
         }
     except ValidInputError as e:
         return {'body': json.dumps({'error': str(e)})}

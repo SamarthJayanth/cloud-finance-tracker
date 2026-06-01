@@ -4,6 +4,8 @@ from decimal import Decimal # DynamoDB doesn't take float values
 from datetime import date
 from input_sanitize import *
 from boto3.dynamodb.conditions import Key, Attr
+from botocore.exceptions import ClientError
+
 dynamodb = boto3.resource('dynamodb', region_name = 'us-east-2')
 table = dynamodb.Table('budgets')
 
@@ -44,7 +46,7 @@ def add_budget(budget: dict):
     except Exception as e:
         print(f'DynamoDB error: {str(e)}')
         raise DataBaseError('Failed to add budget')
-def edit_budget(budget: dict) -> dict | None:
+def edit_budget(budget: dict):
     # Updates specific fields on a budget
     # Only keys present in updates are changed
     budget_id = budget.pop('id')
@@ -61,13 +63,19 @@ def edit_budget(budget: dict) -> dict | None:
             Key = {
                 'id': budget_id
             },
+            ConditionExpression = Attr('id').exists(),
             UpdateExpression = update_expr,
             ExpressionAttributeNames = expr_attr_names,
             ExpressionAttributeValues = expr_attr_vals
         )
+    except ClientError as e:
+        if e.response['Error']['Code'] == 'ConditionalCheckFailedException':
+            raise NotFoundError('Budget not found')
+        print(f'DynamoDB error: {str(e)}')
+        raise DataBaseError('Failed to update budget')
     except Exception as e:
         print(f'DynamoDB error {str(e)}')
-        raise DataBaseError('Failed to edit budget')
+        raise DataBaseError('Failed to update budget')
 def delete_budget(budget_id: str):
     # Deletes an budget by id
     try:

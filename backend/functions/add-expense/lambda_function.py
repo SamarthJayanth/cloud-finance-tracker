@@ -27,19 +27,14 @@ def lambda_handler(event: dict, context) :
     # fields = json.loads(event.get('body')) for an API call
     try: 
         fields = event.get('body')
-        amount =  sanitize_amount(fields.get('amount'))
-        expense_type = sanitize_type(fields.get('type'))
-        date = sanitize_date(fields.get('date'))
-        description = sanitize_description(fields.get('description'))
-        expense_id = str(uuid.uuid4())
-        name = sanitize_name(fields.get('name'))
+        description = sanitize_description(fields.get('description')) if fields.get('description') else None
         expense = {
-            'name': name,
-            'amount': Decimal(round(amount, 2)),
-            'type':expense_type,
-            'date':date,
+            'name': sanitize_name(fields.get('name')),
+            'amount': Decimal(round(sanitize_amount(fields.get('amount')), 2)),
+            'type': sanitize_type(fields.get('type')),
+            'date': sanitize_date(fields.get('date')),
             'description':description,
-            'id': expense_id
+            'id': str(uuid.uuid4())
         }
         add_expense(expense)
         return {

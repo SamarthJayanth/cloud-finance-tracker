@@ -20,10 +20,18 @@ def lambda_handler(event: dict):
         # For proper security, we must ensure that the request is sent by an authorized user
 
         # Remove from data base
+        delete_expense(expense_id)
+        return {
+            'statusCode': 201,
+            'body': json.dumps({
+                'message': 'Expense deleted successfully',
+                'expense_id': expense_id
+            })
+        }
     except ValidInputError as e:
         return {'body': json.dumps({'error': str(e)})}
     except DataBaseError as e:
         return {'body': json.dumps({'error': str(e)})}
     except Exception:
-        print(f'Unexpected rrror: {str(e)}')
+        print(f'Unexpected error: {str(e)}')
         return {'body': json.dumps({'error': 'Internal Server Error'})}

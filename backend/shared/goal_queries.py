@@ -4,6 +4,8 @@ from decimal import Decimal # DynamoDB doesn't take float values
 from datetime import date
 from input_sanitize import *
 from boto3.dynamodb.conditions import Key, Attr
+from botocore.exceptions import ClientError
+
 dynamodb = boto3.resource('dynamodb', region_name = 'us-east-2')
 table = dynamodb.Table('goals')
 
@@ -69,10 +71,16 @@ def edit_goal(goal: dict) -> dict | None:
             Key = {
                 'id': goal_id
             },
-            UpdateExpression = update_expr,
-            ExpressionAttributeNames = expr_attr_names,
-            ExpressionAttributeValues = expr_attr_vals
+        ConditionExpression = Attr('id').exists(),
+        UpdateExpression = update_expr,
+        ExpressionAttributeNames = expr_attr_names,
+        ExpressionAttributeValues = expr_attr_vals
         )
+    except ClientError as e:
+        if e.response['Error']['Code'] == 'ConditionalCheckFailedException':
+            raise NotFoundError('Goal not found')
+        print(f'DynamoDB error: {str(e)}')
+        raise DataBaseError('Failed to update goal')
     except Exception as e:
         print(f'DynamoDB error {str(e)}')
-        raise DataBaseError('Failed to edit goal')
+        raise DataBaseError('Failed to update goal')
