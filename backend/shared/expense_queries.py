@@ -61,7 +61,7 @@ def edit_expense(expense: dict):
         update_expr = 'SET ' + ', '.join(update_parts)      # join all pairs at end
         table.update_item(
     Key={
-        'id': expense.get('id'),
+        'id': expense_id,
     },
     UpdateExpression = update_expr,
     ExpressionAttributeNames = expr_attr_names,

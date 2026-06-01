@@ -25,7 +25,7 @@ def get_goals(start_date: str = earliest_date, end_date: str = None,
     if end_date is None:
         end_date = str(date.today())
     try:
-        filter_expr = Attr('date').between(start_date, end_date)
+        filter_expr = Attr('start_date').between(start_date, end_date)
         if min_amount is not None: # Evaluate here because min amt could be 0
             filter_expr = filter_expr & Attr('amount').gt(min_amount)
         if max_amount is not None: 
@@ -71,7 +71,7 @@ def edit_goal(goal: dict) -> dict | None:
             },
             UpdateExpression = update_expr,
             ExpressionAttributeNames = expr_attr_names,
-            ExpressionAttributeVals = expr_attr_vals
+            ExpressionAttributeValues = expr_attr_vals
         )
     except Exception as e:
         print(f'DynamoDB error {str(e)}')

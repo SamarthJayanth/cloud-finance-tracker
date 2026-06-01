@@ -26,13 +26,23 @@ def get_incomes(start_date: str = earliest_date, end_date: str = None,
     except Exception as e:
         print(f'Dynamodb error: {str(e)}')
         raise DataBaseError('Failed to get incomes')
-income_config = {'one-time' : 1, 'weekly' : 52, 'biweekly' : 26, 'monthly' : 12, 'quarterly' : 3, 'yearly' : 1}
+income_config = {'one-time' : 1, 'weekly' : 52, 'biweekly' : 26, 'monthly' : 12, 'quarterly' : 4, 'yearly' : 1}
 def get_total_yearly_income(start_date: str = earliest_date, end_date: str = None,
                         min_amount: float = None, max_amount: float = None, period: str = None):
     # Returns single sum — just calls get_incomes and sums
     items = get_incomes(start_date, end_date, min_amount, max_amount, period)
     sum_items = 0
     for item in items:
+        sum_items = sum_items + item.get('amount')*(income_config.get(item.get('period')))
+    return sum_items
+def get_total_yearly_recurring_income(start_date: str = earliest_date, end_date: str = None,
+                        min_amount: float = None, max_amount: float = None, period: str = None):
+    # Returns single sum — just calls get_incomes and sums
+    items = get_incomes(start_date, end_date, min_amount, max_amount, period)
+    sum_items = 0
+    for item in items:
+        if(item.get('period') == 'one-time'):
+            continue
         sum_items = sum_items + item.get('amount')*(income_config.get(item.get('period')))
     return sum_items
 def add_income(income: dict):
@@ -60,7 +70,7 @@ def edit_income(income: dict) -> dict | None:
             },
             UpdateExpression = update_expr,
             ExpressionAttributeNames = expr_attr_names,
-            ExpressionAttributeVals = expr_attr_vals
+            ExpressionAttributeValues = expr_attr_vals
         )
     except Exception as e:
         print(f'DynamoDB error {str(e)}')

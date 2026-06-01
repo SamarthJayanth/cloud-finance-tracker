@@ -17,7 +17,7 @@ def get_budgets(start_date: str = earliest_date, end_date: str = None, budget_ty
     try:
         filter_expr = Attr('date').between(start_date, end_date)
         if budget_type is not None:
-            filter_expr = filter_expr & Attr('type').gt(budget_type)
+            filter_expr = filter_expr & Attr('type').eq(budget_type)
         if min_amount is not None: # Evaluate here because min amt could be 0
             filter_expr = filter_expr & Attr('amount').gt(min_amount)
         if max_amount is not None: 
@@ -29,7 +29,7 @@ def get_budgets(start_date: str = earliest_date, end_date: str = None, budget_ty
     except Exception as e:
         print(f'Dynamodb error: {str(e)}')
         raise DataBaseError('Failed to get budgets')
-budget_config = {'weekly' : 52, 'biweekly' : 26, 'monthly' : 12, 'quarterly' : 3, 'yearly' : 1}
+budget_config = {'weekly' : 52, 'biweekly' : 26, 'monthly' : 12, 'quarterly' : 4, 'yearly' : 1}
 def get_total_yearly_budget(start_date: str = earliest_date, end_date: str = None, budget_type: str = None,
                  min_amount: float = None, max_amount: float = None, period: str = None):
     # Returns single sum — just calls get_budgets and sums
@@ -63,7 +63,7 @@ def edit_budget(budget: dict) -> dict | None:
             },
             UpdateExpression = update_expr,
             ExpressionAttributeNames = expr_attr_names,
-            ExpressionAttributeVals = expr_attr_vals
+            ExpressionAttributeValues = expr_attr_vals
         )
     except Exception as e:
         print(f'DynamoDB error {str(e)}')
