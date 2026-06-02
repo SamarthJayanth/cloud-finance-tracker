@@ -14,17 +14,17 @@ def lambda_handler(event, context):
     #   miscellaneous 
     #   body = 
     #       {
-    #           'record_type': 'income'
     #           'amount': ''num'
     #           'name': 'str'
-    #           'period': 'str' optional
-    #           'date': 'str
+    #           'period': 'str' 
+    #           'start_date': 'str
+    #           'description': 'str' optional
     #       }
     # }
     try:
         fields = event.get('body')
 
-        period = sanitize_period(fields.get('period'))
+        period = sanitize_period(fields.get('period'), 'income')
         description = sanitize_description(fields.get('description')) if fields.get('description') else None
         income = {
             'amount': sanitize_amount(fields.get('amount')),

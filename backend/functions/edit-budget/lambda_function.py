@@ -19,6 +19,7 @@ def lambda_handler(event, context):
     #       'description': 'str'
     #       'is_recurring': 'bool'
     #       'id': 'str'
+    #       'name': 'str'
     #    }
     #  } 
     try:
@@ -28,6 +29,7 @@ def lambda_handler(event, context):
         # This sends a full request, not just the changes
         budget = {
             'id' : budget_id,
+            'name' : sanitize_name(fields.get('name')),
             'amount' : sanitize_amount(fields.get('amount')),
             'period' : sanitize_period(fields.get('period')),
             'type' : sanitize_type(fields.get('type')),

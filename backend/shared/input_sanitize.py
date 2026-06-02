@@ -77,7 +77,7 @@ def sanitize_description(val):
 allowed_budget_periods = {'weekly', 'biweekly', 'monthly', 'quarterly', 'yearly'}
 allowed_income_periods = {'one-time', 'weekly', 'biweekly', 'monthly', 'quarterly', 'yearly'}
 # Since income can be one time, is has no delta time, so we use default parameter here to fix this issue
-def sanitize_period(val, allowed_periods = allowed_budget_periods):
+def sanitize_period(val, record_type = 'budget'):
     if(val == None):
         raise ValidInputError('Period cannot be empty')
     if(not isinstance(val, str)):
@@ -85,6 +85,12 @@ def sanitize_period(val, allowed_periods = allowed_budget_periods):
     val = val.strip().lower()
     if(len(val) > 50):
         raise ValidInputError('Period cannot be longer than 50 characters')
+    if(record_type == 'income'):
+        allowed_periods = allowed_income_periods
+    elif(record_type == 'budget'):
+        allowed_periods = allowed_budget_periods
+    else:
+        raise AppError('Invalid record type')
     if (not(val in allowed_periods)):
         raise ValidInputError('Period cannot be different than allowed types')
     return val

@@ -27,7 +27,7 @@ def lambda_handler(event, context):
         income = {
             'id' : income_id,
             'amount' : sanitize_amount(fields.get('amount')),
-            'period' : sanitize_period(fields.get('period')),
+            'period' : sanitize_period(fields.get('period'), 'income'),
             'name' : sanitize_name(fields.get('name')),
             'start_date' : sanitize_date(fields.get('date')),
             'description': sanitize_type(fields.get('description'))

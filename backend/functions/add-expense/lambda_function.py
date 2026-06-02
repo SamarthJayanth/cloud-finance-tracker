@@ -19,7 +19,7 @@ def lambda_handler(event, context) :
     #       'amount' : 'num' 
     #       'type': 'str'
     #       'date': 'YYYY-MM-DD' default is 2000-01-01
-    #       'description': 'str'
+    #       'description': 'str' optional
     #       'name': 'str'
     #    }
     #  } 

@@ -2,6 +2,7 @@ import json
 import uuid
 
 from input_sanitize import *
+from errors import *
 def lambda_handler(event, context):
     # Receives input details of a specific budget from user
     # Assigns an id and stores to database
@@ -13,10 +14,11 @@ def lambda_handler(event, context):
     #   {
     #       'amount' : 'num' 
     #       'type': 'str'
-    #       'date': 'YYYY-MM-DD' 
+    #       'start_date': 'YYYY-MM-DD' 
     #       'name': 'str'
     #       'period': 'str' one of allotted types
     #       'is_recurring': 'bool'
+    #       'description': 'str' optional
     #    }
     #  } 
     try:
