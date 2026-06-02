@@ -22,10 +22,15 @@ def lambda_handler(event: dict):
         fields = event.get('body')
         end_date = date.today()
         start_date = date.today().replace(day = 1)
-        expenses = get_expenses_by_date_range({'start_date':start_date, 'end_date':end_date})
-        amount = 0
-        for expense in expenses:
-            amount += expense.get('amount')
+        total_expenses = get_total_expenses(start_date = start_date, end_date = end_date)
+        total_income = get_total_income(start_date = start_date, end_date = end_date)
+        return {
+            'body': {
+                'amount_spent': total_expenses,
+                'amount_earned': total_income,
+                'amount_saved': round(total_income - total_expenses, 2) if total_income > total_expenses else 0
+            }
+        }
     except ValidInputError as e:
         return {'body': json.dumps({'error': str(e)})}
     except DataBaseError as e:

@@ -1,19 +1,29 @@
 from datetime import datetime, date, timedelta
 from dateutil.relativedelta import relativedelta
 
-def calculate_goal_status():
-        pass
+def calculate_goal_status(amount_spent, target_savings, income_earned, start_date, end_date):
+    date_today = date.today()
+    days_total = (end_date - start_date).days + 1
+    days_elapsed = (date_today - start_date).days + 1
+    days_remaining = (end_date - date_today).days
 
+    percentage_saved = (amount_spent / target_savings) * 100 if target_savings > 0 else 0
+    daily_average_savings = (income_earned-amount_spent) / days_elapsed if days_elapsed > 0 else 0
+    projected_savings = daily_average_savings * days_total
+    daily_recommended_savings = target_savings / days_total
+    if daily_average_savings < daily_recommended_savings:
+        status = 'warning'
+    else:
+        status = 'on_track'
 
-        
-# start_date = goal.get('start_date')
-# total_income = get_total_income(sanitize_date(start_date),str(date.today()))
-#         all_expenses = get_expenses_by_date_range(sanitize_date(start_date),str(date.today()))
-#         total_expenses = sum(exp.get('amount', 0) for exp in all_expenses)
-#         percentage_to_goal = (total_income / total_expenses)
-#         if (percentage_to_goal > 1.00):
-#             # Goal reached
-#     return
-# projected_delta_days = ((date.today()-datetime.strptime(start_date, '%Y-%m-%d')).days)/percentage_to_goal
-# projected_delta_days = math.ceil(projected_delta_days)
-# projected_end_date = datetime.strptime(start_date, '%Y-%m-%d') + timedelta(days = projected_delta_days)
+        return {
+        'amount_spent':     round(amount_spent, 2),
+        'percentage_saved':  round(percentage_saved, 2),
+        'days_elapsed':     days_elapsed,
+        'days_remaining':   days_remaining,
+        'days_total':       days_total,
+        'daily_recommended_savings':  round(daily_recommended_savings, 2),
+        'daily_average_savings':    round(daily_average_savings, 2),
+        'projected_savings':  round(projected_savings, 2),
+        'status':           status
+    }

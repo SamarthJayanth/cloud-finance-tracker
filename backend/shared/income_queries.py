@@ -28,6 +28,10 @@ def get_incomes(start_date: str = earliest_date, end_date: str = None,
     except Exception as e:
         print(f'Dynamodb error: {str(e)}')
         raise DataBaseError('Failed to get incomes')
+def get_total_income(start_date: str = earliest_date, end_date: str = None,
+                 min_amount: float = None, max_amount: float = None, period: str = None):
+    incomes = get_incomes(start_date, end_date, min_amount, max_amount, period)
+    return sum(income.get('amount') for income in incomes)
     
 income_config = {'one-time' : 1, 'weekly' : 52, 'biweekly' : 26, 'monthly' : 12, 'quarterly' : 4, 'yearly' : 1}
 def get_total_yearly_income(start_date: str = earliest_date, end_date: str = None,

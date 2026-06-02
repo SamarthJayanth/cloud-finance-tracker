@@ -93,7 +93,7 @@ def calculate_budget_status(amount_spent: float, amount_limit: float,
         'days_elapsed':     days_elapsed,
         'days_remaining':   days_remaining,
         'days_total':       days_total,
-        'daily_recommend':  round(daily_recommended, 2),
+        'daily_recommended':  round(daily_recommended, 2),
         'daily_average':    round(daily_average, 2),
         'projected_total':  round(projected_total, 2),
         'status':           status
