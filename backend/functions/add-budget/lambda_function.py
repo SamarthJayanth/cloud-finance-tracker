@@ -2,7 +2,7 @@ import json
 import uuid
 
 from input_sanitize import *
-def lambda_handler(event: dict):
+def lambda_handler(event, context):
     # Receives input details of a specific budget from user
     # Assigns an id and stores to database
     # Arguments:

@@ -1,6 +1,6 @@
 import json
 
-def lambda_handler(event: dict):
+def lambda_handler(event, context):
     # Deletes an income from database
     # Arguments:
     # event = 

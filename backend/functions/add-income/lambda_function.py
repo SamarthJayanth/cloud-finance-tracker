@@ -6,7 +6,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '../../shared'))
 
 from input_sanitize import *
 from errors import *
-def lambda_handler(event: dict):
+def lambda_handler(event, context):
     # Adds an income to the database
     # Arguments
     # event =

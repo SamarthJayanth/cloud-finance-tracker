@@ -8,7 +8,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '../../shared'))
 from input_sanitize import *
 from expense_queries import *
 
-def lambda_handler(event: dict):
+def lambda_handler(event, context):
     # Calculates the daily average spending in a certain time period
     # Arguments:
     # event = 

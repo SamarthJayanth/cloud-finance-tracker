@@ -5,7 +5,7 @@ from input_sanitize import *
 from expense_queries import *
 
 
-def lambda_handler(event: dict):
+def lambda_handler(event, context):
     # Notifies if 80% of any budget has been used
     # Also notifies if the current rate of expenses exceeds the limit set
     # Weekly gets notifs once a day, biweekly every 2 days, monthly each week, quarterly every 2 weeks, yearly each month

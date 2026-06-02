@@ -8,7 +8,7 @@ from errors import * # comes from layer automatically
 # event contains data from the API call
 # Will also authenticate users
 
-def lambda_handler(event: dict, context) :
+def lambda_handler(event, context) :
     # Adds an expense to the database
     # Arguments:
     # event = 

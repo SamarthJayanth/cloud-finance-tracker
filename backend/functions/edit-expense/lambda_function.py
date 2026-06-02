@@ -5,7 +5,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '../../shared'))
 
 from input_sanitize import *
 
-def lambda_handler(event: dict):
+def lambda_handler(event, context):
     # Edits a previously added expense
     # Arguments:
     # event = 

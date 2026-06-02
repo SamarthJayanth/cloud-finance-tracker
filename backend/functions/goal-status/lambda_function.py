@@ -12,7 +12,7 @@ from goal_queries import *
 from goal_utils import *
 from income_queries import *
 
-def lambda_handler(event: dict):
+def lambda_handler(event, context):
     # Returns total progress statistics to a savings goal
     # Arguments:
     # event = 

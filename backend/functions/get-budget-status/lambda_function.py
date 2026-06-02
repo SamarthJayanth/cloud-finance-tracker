@@ -9,7 +9,7 @@ from input_sanitize import *
 from budget_queries import *
 from expense_queries import *
 from budget_utils import *
-def lambda_handler(event: dict):
+def lambda_handler(event, context):
     # Receives a budget and determines certain statistics
     # Ensures it is a valid budget, then determines the following:
     # How much is spent/remaining, how many days elpased/remain, etc

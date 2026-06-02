@@ -5,7 +5,7 @@ from datetime import date, datetime
 from input_sanitize import *
 from errors import *
 
-def lambda_handler(event: dict):
+def lambda_handler(event, context):
     # Sets a goal for a user to hit 
     # Goal is an amount saved in some time
      # Arguments:

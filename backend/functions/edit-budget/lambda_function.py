@@ -4,7 +4,7 @@ import json
 from input_sanitize import *
 from errors import *
 
-def lambda_handler(event: dict):
+def lambda_handler(event, context):
     # Edits the details of a previously made budget
     # Arguments:
     # event = 

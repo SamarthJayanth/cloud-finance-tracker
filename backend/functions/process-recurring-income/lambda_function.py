@@ -28,7 +28,7 @@ def is_payment_due(income: dict, date_today):
         case _:
             print(f'DynamoDB error')
             raise DataBaseError('Failed to check payment due')
-def lambda_handler(event: dict, context):
+def lambda_handler(event, context):
     # Triggered to add incomes daily
     # Meant to be triggered by EventBridge
     # Adds an income to database if the payment due date is today

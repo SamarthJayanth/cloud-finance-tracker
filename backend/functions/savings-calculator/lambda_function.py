@@ -9,7 +9,7 @@ from expense_queries import *
 
 
 
-def lambda_handler(event: dict, context):
+def lambda_handler(event, context):
     # Returns how much has been saved in a certain period of time
     # Date is optional
     fields = event.get('body') if event.get('body') else {}
