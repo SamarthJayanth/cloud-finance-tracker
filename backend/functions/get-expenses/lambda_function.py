@@ -15,28 +15,30 @@ def lambda_handler(event: dict):
     #    miscellaneous
     # body = 
     #   {
-    #       'amount' : 'num' 
-    #       'type': 'str'
-    #       'date': 'YYYY-MM-DD' default is 2000-01-01
-    #       'description': 'str'
+    #       'min_amount' : 'num' 
+    #       'max_amount': 'num'
+    #       'expense_type': 'str'
+    #       'start_date': 'YYYY-MM-DD' default is 2000-01-01
+    #       'end_date': 'YYYY-MM-DD' default is current day
     #    }
     #  } 
     try:
         fields = event.get('body')
-        query_type = fields.get('type')
-        match query_type: 
-            case 'all':
-                get_all_expenses(fields)
-            case'by_date_range':
-                get_expenses_by_date_range(fields)
-            case 'type':
-                get_expenses_by_type(fields)
-            case 'type_and_by_amount_range':
-                get_expenses_filtered(fields)
-            case 'amount_range':
-                get_expenses_by_amount_range(fields)
-            case _:
-                raise ValidInputError('Type of expense search must be one of allotted types')
+        query_type = fields.get('search_type')
+        expenses = get_expenses(
+        min_amount = sanitize_amount(fields.get('min_amount')) if fields.get('min_amount') else None,
+        max_amount = sanitize_amount(fields.get('max_amount')) if fields.get('max_amount') else None,
+        expense_type = sanitize_type(fields.get('expense_type')) if fields.get('expense_type') else None,
+        start_date = sanitize_date(fields.get('start_date')) if fields.get('start_date') else None,
+        end_date = sanitize_date(fields.get('end_date')) if fields.get('end_date') else None
+        )
+        return {
+            'statusCode': 200,
+            'body': json.dumps({
+            'expenses': expenses, # Need to convert from decimal to float
+            'count': len(expenses)
+        })
+    }
     except ValidInputError as e:
         return {'body': json.dumps({'error': str(e)})}
     except DataBaseError as e:
