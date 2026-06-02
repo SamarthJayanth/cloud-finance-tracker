@@ -13,20 +13,15 @@ def lambda_handler(event: dict, context):
     # Returns how much has been saved in a certain period of time
     # Date is optional
     fields = event.get('body') if event.get('body') else {}
-    start_date = fields.get('start_date') 
-    end_date = fields.get('end_date')
-    if(start_date and end_date):
-        total_income = get_total_income(start_date = sanitize_date(start_date), end_date = sanitize_date(end_date))
-        total_expense = get_total_expenses(start_date = sanitize_date(start_date), end_date = sanitize_date(end_date))
-    elif(start_date and not end_date):
-        total_income = get_total_income(start_date = sanitize_date(start_date))
-        total_expense = get_total_expenses(start_date = sanitize_date(start_date))
-    elif(end_date and not end_date):
-        total_income = get_total_income(end_date = sanitize_date(end_date))
-        total_expense = get_total_expenses(end_date = sanitize_date(end_date))
-    else:
-        total_income = get_total_income()
-        total_expense = get_total_expenses()
+    kwargs = {}
+    # Want to check if start date is non empty but also assign it
+    # Also need to know which arguments to pass through, use kwargs
+    if(start_date := fields.get('start_date')):
+        kwargs['start_date'] = sanitize_date(start_date)
+    if (end_date := fields.get('end_date')):
+        kwargs['end_date'] = sanitize_date(end_date)
+    total_income = get_total_income(**kwargs)
+    total_expense = get_total_expenses(**kwargs)
     return {
         'body': {
             'total_savings': total_income-total_expense
