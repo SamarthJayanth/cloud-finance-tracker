@@ -17,7 +17,6 @@ def lambda_handler(event: dict):
     #       'start_date': 'YYYY-MM-DD'
     #       'period': 'str' one of allotted types
     #       'description': 'str'
-    #       'is_recurring': 'bool'
     #       'id': 'str'
     #    }
     #  } 
@@ -26,11 +25,12 @@ def lambda_handler(event: dict):
         income_id = fields.get('id')
 
         income = {
+            'id' : income_id,
             'amount' : sanitize_amount(fields.get('amount')),
             'period' : sanitize_period(fields.get('period')),
-            'name' : sanitize_type(fields.get('type')),
+            'name' : sanitize_name(fields.get('name')),
             'start_date' : sanitize_date(fields.get('date')),
-            'is_recurring' : sanitize_recurring(fields.get('is_recurring'))
+            'description': sanitize_type(fields.get('description'))
         }
 
         edit_income(income)

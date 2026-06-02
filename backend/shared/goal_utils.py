@@ -2,7 +2,7 @@ from datetime import datetime, date, timedelta
 from dateutil.relativedelta import relativedelta
 
 def calculate_goal_status():
-        
+        pass
 
 
         

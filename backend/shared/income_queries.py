@@ -28,6 +28,7 @@ def get_incomes(start_date: str = earliest_date, end_date: str = None,
     except Exception as e:
         print(f'Dynamodb error: {str(e)}')
         raise DataBaseError('Failed to get incomes')
+    
 income_config = {'one-time' : 1, 'weekly' : 52, 'biweekly' : 26, 'monthly' : 12, 'quarterly' : 4, 'yearly' : 1}
 def get_total_yearly_income(start_date: str = earliest_date, end_date: str = None,
                         min_amount: float = None, max_amount: float = None, period: str = None):
@@ -37,6 +38,7 @@ def get_total_yearly_income(start_date: str = earliest_date, end_date: str = Non
     for item in items:
         sum_items = sum_items + item.get('amount')*(income_config.get(item.get('period')))
     return sum_items
+
 def get_total_yearly_recurring_income(start_date: str = earliest_date, end_date: str = None,
                         min_amount: float = None, max_amount: float = None, period: str = None):
     # Returns single sum — just calls get_incomes and sums
@@ -47,12 +49,23 @@ def get_total_yearly_recurring_income(start_date: str = earliest_date, end_date:
             continue
         sum_items = sum_items + item.get('amount')*(income_config.get(item.get('period')))
     return sum_items
+
+def get_recurring_income():
+    try:    
+        response = table.scan(
+            FilterExpression = Attr('period').ne('one-time')
+        )
+        return response.get('Items', [])
+    except Exception as e:
+        print(f'DynamoDB error: {str(e)}')
+        raise DataBaseError('Failed to get recurring incomes')
 def add_income(income: dict):
     try:
         table.put_item(Item = income)
     except Exception as e:
         print(f'DynamoDB error: {str(e)}')
         raise DataBaseError('Failed to add income')
+    
 def edit_income(income: dict) -> dict | None:
     # Updates specific fields on a income
     # Only keys present in updates are changed
@@ -83,6 +96,7 @@ def edit_income(income: dict) -> dict | None:
     except Exception as e:
         print(f'DynamoDB error {str(e)}')
         raise DataBaseError('Failed to update income')
+    
 def delete_income(income_id: str):
     # Deletes an income by id
     try:

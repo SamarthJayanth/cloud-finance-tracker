@@ -32,8 +32,7 @@ def lambda_handler(event: dict):
             'period': period,
             'id': str(uuid.uuid4()),
             'start_date': sanitize_date(fields.get('date')),
-            'is_recurring': (period != 'one-time'),
-            'type': sanitize_type(fields.get('type'))
+            'description': description
         }
     except ValidInputError as e:
         return {'body': json.dumps({'error': str(e)})}
