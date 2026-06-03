@@ -9,19 +9,20 @@ def lambda_handler(event, context):
     #    user_id: 'str'
     # body = 
     #   {
-    #       'id': 'str'
+    #       'budget_id': 'str'
     #    }
     #  } 
     try:
         fields = event.get('body')
-        budget_id = fields.get('id')
+        user_id = event['requestContext']['authorizer']['claims']['sub']
+        budget_id = fields.get('budget_id')
         if not budget_id:
-            return ValueError('Id is invalid')
+            return ValueError('Budget_id is invalid')
         # Need id to get the actual budget id
         # For proper security, we must ensure that the request is sent by an authorized user
 
         # Remove from data base
-        delete_budget(budget_id)
+        delete_budget(user_id, budget_id)
         return {
             'statusCode': 201,
             'body': json.dumps({

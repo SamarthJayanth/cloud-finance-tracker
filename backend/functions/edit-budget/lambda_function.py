@@ -19,17 +19,18 @@ def lambda_handler(event, context):
     #       'period': 'str' one of allotted types
     #       'description': 'str'
     #       'is_recurring': 'bool'
-    #       'id': 'str'
+    #       'budget_id': 'str'
     #       'name': 'str'
     #    }
     #  } 
     try:
         fields = event.get('body')
-        budget_id = fields.get('id')
+        budget_id = fields.get('budget_id')
 
         # This sends a full request, not just the changes
         budget = {
-            'id' : budget_id,
+            'user_id': event['requestContext']['authorizer']['claims']['sub'],
+            'budget_id' : budget_id,
             'name' : sanitize_name(fields.get('name')),
             'amount' : sanitize_amount(fields.get('amount')),
             'period' : sanitize_period(fields.get('period')),

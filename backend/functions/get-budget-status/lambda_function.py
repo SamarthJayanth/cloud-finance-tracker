@@ -25,12 +25,14 @@ def lambda_handler(event, context):
     #  } 
     try:
         fields = event.get('body')
-        budget_id = fields.get('id')
-        budget = get_budget_by_id(budget_id)
+        budget_id = fields.get('budget_id')
+        user_id = event['requestContext']['authorizer']['claims']['sub'],
+        budget = get_budget_by_id(user_id, budget_id)
         start_date, end_date = get_current_period(budget)
         start_date = str(start_date)
         end_date = str(end_date)
         spent = get_total_expenses(
+            user_id = user_id,
             start_date = start_date,
             end_date = end_date,
             expense_type = budget.get('type')
@@ -40,6 +42,7 @@ def lambda_handler(event, context):
         status = calculate_budget_status(spent, limit, start_date, end_date)
         return {
                 'body': {
+                    'user_id': event['requestContext']['authorizer']['claims']['sub'],
                     'budget_id':   budget_id,
                     'budget_name': budget.get('name'),
                     'period':      budget.get('period'),

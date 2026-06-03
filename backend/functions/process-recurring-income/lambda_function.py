@@ -42,12 +42,14 @@ def lambda_handler(event, context):
     #    }
     #  } 
     try:
-        recurring_incomes = get_recurring_income()
+        user_id = event['requestContext']['authorizer']['claims']['sub'],
+        recurring_incomes = get_recurring_income(user_id)
         date_today = date.today()
         for income in recurring_incomes:
             if(is_payment_due(income, date_today)):
                 add_income({
-                    'id': str(uuid.uuid4()),
+                    'user_id': event['requestContext']['authorizer']['claims']['sub'],
+                    'income_id': str(uuid.uuid4()),
                     'name': income.get('name'),
                     'amount': income.get('amount'),
                     'description': income.get('description'),

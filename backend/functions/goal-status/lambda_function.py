@@ -21,22 +21,24 @@ def lambda_handler(event, context):
     #   user_id: 'str'
     #   body =
     #   {
-    #       'id': 'str'
+    #       'goal_id': 'str'
     #   }
     # }
     try:
         fields = event.get('body')
-        goal_id = fields.get('id')
-        goal = get_goal_by_id(goal_id)
+        goal_id = fields.get('goal_id')
+        user_id = event['requestContext']['authorizer']['claims']['sub'],
+        goal = get_goal_by_id(user_id, goal_id)
         goal_amount = goal.get('amount')
         start_date = goal.get('start_date')
         end_date = goal.get('end_date')
-        total_income = get_total_incomes(sanitize_date(start_date), str(date.today()))
-        total_expense = get_total_expenses(sanitize_date(start_date), str(date.today()))
+        total_income = get_total_income(user_id = user_id, start_date = sanitize_date(start_date), end_date = str(date.today()))
+        total_expense = get_total_expenses(user_id = user_id, start_date = sanitize_date(start_date), end_date = str(date.today()))
         status = calculate_goal_status(amount_spent = total_expense, income_earned = total_income, target_savings = goal_amount, start_date = start_date, end_date = end_date)
         return {
             'body': {
-                    'id':   goal_id,
+                    'user_id': event['requestContext']['authorizer']['claims']['sub'],
+                    'goal_id':   goal_id,
                     'name': goal.get('name'),
                     'start_date':  start_date,
                     'end_date':    end_date,

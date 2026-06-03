@@ -21,16 +21,15 @@ def lambda_handler(event, context):
     #  }
     try:
         fields = event.get('body')
-        user_id = event['requestContext']['authorizer']['claims']['sub'],
+        user_id = event['requestContext']['authorizer']['claims']['sub']
         # Retrieve all from database
-        all_budgets = get_budgets(user_id)
+        all_budgets = get_budgets(user_id = user_id)
         for budget in all_budgets:
             # Call budget-status
             # Check amounts returned
             start_date, end_date = get_current_period(budget)
-            expenses = get_expenses(start_date = start_date, end_date = end_date)
-            amount_spent = sum(exp.get('amount', 0) for exp in expenses)
-            full_status = calculate_budget_status(amount_spent, budget.get('amount', 0), start_date, end_date)
+            total_expenses = get_total_expenses(user_id = user_id, start_date = start_date, end_date = end_date)
+            full_status = calculate_budget_status(total_expenses, budget.get('amount', 0), start_date, end_date)
             if (full_status.get('status') == 'warning'):
                 pass #Send alert
     except ValidInputError as e:

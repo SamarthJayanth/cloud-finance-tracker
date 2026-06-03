@@ -21,10 +21,11 @@ def lambda_handler(event, context):
     #  } 
     try:
         fields = event.get('body')
+        user_id = event['requestContext']['authorizer']['claims']['sub'],
         end_date = date.today()
         start_date = date.today().replace(day = 1)
-        total_expenses = get_total_expenses(start_date = start_date, end_date = end_date)
-        total_income = get_total_income(start_date = start_date, end_date = end_date)
+        total_expenses = get_total_expenses(user_id = user_id,start_date = start_date, end_date = end_date)
+        total_income = get_total_income(user_id = user_id, start_date = start_date, end_date = end_date)
         return {
             'body': {
                 'amount_spent': total_expenses,

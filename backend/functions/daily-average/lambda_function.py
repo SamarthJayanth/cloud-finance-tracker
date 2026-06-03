@@ -24,6 +24,7 @@ def lambda_handler(event, context):
     #  }
     try:
         fields = event.get('body')
+        user_id = event['requestContext']['authorizer']['claims']['sub']
         start_date = sanitize_date(fields.get('start_date'))
         end_date = sanitize_date(fields.get('end_date'))
         expenses_type = sanitize_type(fields.get('type')) if fields.get('type') else None 
@@ -31,7 +32,7 @@ def lambda_handler(event, context):
         if(delta_days.days < 0):
             raise ValidInputError("Start date must be before end date")
         
-        expense_sum = get_total_expenses(start_date = start_date, end_date = end_date, type = expenses_type)
+        expense_sum = get_total_expenses(user_id = user_id, start_date = start_date, end_date = end_date, type = expenses_type)
 
         return round(expense_sum/(delta_days.days + 1), 2)
     except ValidInputError as e:

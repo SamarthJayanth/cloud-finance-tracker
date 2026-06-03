@@ -27,6 +27,7 @@ def lambda_handler(event, context):
         fields = event.get('body')
         query_type = fields.get('search_type')
         expenses = get_expenses(
+        user_id = event['requestContext']['authorizer']['claims']['sub'],
         min_amount = sanitize_amount(fields.get('min_amount')) if fields.get('min_amount') else None,
         max_amount = sanitize_amount(fields.get('max_amount')) if fields.get('max_amount') else None,
         expense_type = sanitize_type(fields.get('expense_type')) if fields.get('expense_type') else None,

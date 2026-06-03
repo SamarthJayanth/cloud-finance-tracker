@@ -19,7 +19,7 @@ def lambda_handler(event, context):
     #       'type': 'str'
     #       'date': 'YYYY-MM-DD'
     #       'description': 'str'
-    #       'id': 'str'
+    #       'expense_id': 'str'
     #    }
     #  } 
     # fields = json.loads(event.get('body')) for an API call
@@ -27,7 +27,8 @@ def lambda_handler(event, context):
         fields = event.get('body')
         expense_id = fields.get('id')
         expense = {
-            'id': expense_id,
+            'user_id': event['requestContext']['authorizer']['claims']['sub'],
+            'expense_id': expense_id,
             'name' : sanitize_name(fields.get('name')),
             'amount' :  sanitize_amount(fields.get('amount')),
             'type' : sanitize_type(fields.get('type')),

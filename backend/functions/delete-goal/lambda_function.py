@@ -9,19 +9,20 @@ def lambda_handler(event, context):
     #     user_id: 'str'
     # body = 
     #   {
-    #       'id': 'str'
+    #       'goal_id': 'str'
     #    }
     #  } 
     try:
         fields = event.get('body')
-        goal_id = fields.get('id')
+        user_id = event['requestContext']['authorizer']['claims']['sub']
+        goal_id = fields.get('goal_id')
         if not goal_id:
-            return ValueError('Id is invalid')
+            return ValueError('Goal_id is invalid')
         # Need id to get the actual goal id
         # For proper security, we must ensure that the request is sent by an authorized user
 
         # Remove from data base
-        delete_goal(goal_id)
+        delete_goal(user_id, goal_id)
         return {
             'statusCode': 201,
             'body': json.dumps({

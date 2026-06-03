@@ -18,15 +18,16 @@ def lambda_handler(event, context):
     #       'start_date': 'YYYY-MM-DD'
     #       'period': 'str' one of allotted types
     #       'description': 'str'
-    #       'id': 'str'
+    #       'income_id': 'str'
     #    }
     #  } 
     try:
         fields = event.get('body')
-        income_id = fields.get('id')
+        income_id = fields.get('income_id')
 
         income = {
-            'id' : income_id,
+            'user_id': event['requestContext']['authorizer']['claims']['sub'],
+            'income_id' : income_id,
             'amount' : sanitize_amount(fields.get('amount')),
             'period' : sanitize_period(fields.get('period'), 'income'),
             'name' : sanitize_name(fields.get('name')),

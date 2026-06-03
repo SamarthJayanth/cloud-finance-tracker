@@ -24,6 +24,7 @@ def lambda_handler(event, context):
     #    }
     #  } 
     fields = event.get('body') if event.get('body') else {}
+    user_id = event['requestContext']['authorizer']['claims']['sub'],
     kwargs = {}
     # Want to check if start date is non empty but also assign it
     # Also need to know which arguments to pass through, use kwargs
@@ -31,8 +32,8 @@ def lambda_handler(event, context):
         kwargs['start_date'] = sanitize_date(start_date)
     if (end_date := fields.get('end_date')):
         kwargs['end_date'] = sanitize_date(end_date)
-    total_income = get_total_income(**kwargs)
-    total_expense = get_total_expenses(**kwargs)
+    total_income = get_total_income(user_id = user_id, **kwargs)
+    total_expense = get_total_expenses(user_id = user_id, **kwargs)
     return {
         'body': {
             'total_savings': total_income-total_expense
