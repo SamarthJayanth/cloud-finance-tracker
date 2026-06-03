@@ -28,10 +28,11 @@ def lambda_handler(event, context):
         period = sanitize_period(fields.get('period'), 'income')
         description = sanitize_description(fields.get('description')) if fields.get('description') else None
         income = {
+            'user_id': event['requestContext']['authorizer']['claims']['sub'],
             'amount': sanitize_amount(fields.get('amount')),
             'name': sanitize_name(fields.get('name')),
             'period': period,
-            'id': str(uuid.uuid4()),
+            'income_id': str(uuid.uuid4()),
             'start_date': sanitize_date(fields.get('date')),
             'description': description
         }

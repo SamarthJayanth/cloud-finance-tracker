@@ -30,12 +30,13 @@ def lambda_handler(event, context):
         if (start_date > end_date):
             raise ValidInputError('Start date cannot be ahead of the end_date')
         goal = {
+            'user_id': event['requestContext']['authorizer']['claims']['sub'],
             'amount' : sanitize_amount(fields.get('amount')),
             'name' : sanitize_name(fields.get('name')),
             'start_date': start_date,
             'end_date': end_date,
             'description': description,
-            'id': str(uuid.uuid4())
+            'goal_id': str(uuid.uuid4())
         }
         add_goal(goal)
         return {

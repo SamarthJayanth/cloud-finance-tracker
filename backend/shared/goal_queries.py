@@ -10,18 +10,20 @@ dynamodb = boto3.resource('dynamodb', region_name = 'us-east-2')
 table = dynamodb.Table('goals')
 
 earliest_date = '2000-01-01'
-def get_goal_by_id(goal_id: str) -> dict | None:
+def get_goal_by_id(user_id: str, goal_id: str) -> dict | None:
     # Fetches a single goal by id, returns None if not found
     try:
-        response = table.query(KeyConditionExpression = Key('id').eq(goal_id))
-        goal = response.get('Items')[0] if response.get('Items') else None
+        response = table.get_item(Key = {
+            'user_id': user_id,
+            'goal_id': goal_id
+        })
+        return response.get('Item')
         # return from goals_table
-        return goal
     except Exception as e:
         print(f'DynamoDB error: {str(e)}')
         raise DataBaseError('Failed to get goal')
     
-def get_goals(start_date: str = earliest_date, end_date: str = None,
+def get_goals(user_id: str, start_date: str = earliest_date, end_date: str = None,
                  min_amount: float = None, max_amount: float = None):
     # Returns list of expense records matching filters
     if end_date is None:
@@ -32,7 +34,10 @@ def get_goals(start_date: str = earliest_date, end_date: str = None,
             filter_expr = filter_expr & Attr('amount').gt(min_amount)
         if max_amount is not None: 
             filter_expr = filter_expr & Attr('amount').lt(max_amount)
-        response = table.scan(FilterExpression = filter_expr)
+        response = table.query(
+            KeyConditionExpression = Key('user_id').eq(user_id),
+            FilterExpression = filter_expr
+            )
         return response.get('Items', [])
     except Exception as e:
         print(f'Dynamodb error: {str(e)}')
@@ -46,10 +51,10 @@ def add_goal(goal: dict):
         raise DataBaseError('Failed to add goal')
 
     
-def delete_goal(goal_id: str):
+def delete_goal(user_id: str, goal_id: str):
     # Deletes a goal by id
     try:
-        table.delete_item(Key = {'id': goal_id})
+        table.delete_item(Key = {'user_id': user_id, 'goal_id': goal_id})
     except Exception as e:
         print(f'DynamoDB error: {str(e)}')
         raise DataBaseError('Failed to delete goal')
@@ -57,7 +62,8 @@ def delete_goal(goal_id: str):
 def edit_goal(goal: dict) -> dict | None:
     # Updates specific fields on a goal
     # Only keys present in updates are changed
-    goal_id = goal.pop('id')
+    goal_id = goal.pop('goal_id')
+    user_id = goal.pop('user_id')
     try:
         update_parts = []
         expr_attr_names = {}
@@ -69,9 +75,10 @@ def edit_goal(goal: dict) -> dict | None:
         update_expr = 'SET '+' , '.join(update_parts)
         table.update_item(
             Key = {
-                'id': goal_id
+                'user_id': user_id,
+                'goal_id': goal_id
             },
-        ConditionExpression = Attr('id').exists(),
+        ConditionExpression = Attr('goal_id').exists(),
         UpdateExpression = update_expr,
         ExpressionAttributeNames = expr_attr_names,
         ExpressionAttributeValues = expr_attr_vals
