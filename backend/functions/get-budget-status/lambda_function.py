@@ -17,6 +17,7 @@ def lambda_handler(event, context):
     # event = 
     # {
     #    miscellaneous
+    #    user_id: 'str'
     # body = 
     #   {
     #       'id' : 'str'

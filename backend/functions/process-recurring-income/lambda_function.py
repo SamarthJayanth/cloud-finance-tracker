@@ -32,6 +32,15 @@ def lambda_handler(event, context):
     # Triggered to add incomes daily
     # Meant to be triggered by EventBridge
     # Adds an income to database if the payment due date is today
+    # Arguments:
+    # event = 
+    # {
+    #    miscellaneous
+    #    user_id: 'str'
+    # body = 
+    #   {
+    #    }
+    #  } 
     try:
         recurring_incomes = get_recurring_income()
         date_today = date.today()

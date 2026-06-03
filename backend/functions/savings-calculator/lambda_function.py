@@ -12,6 +12,17 @@ from expense_queries import *
 def lambda_handler(event, context):
     # Returns how much has been saved in a certain period of time
     # Date is optional
+    # Arguments:
+    # event = 
+    # {
+    #    miscellaneous
+    #    user_id: 'str'
+    # body = 
+    #   {
+    #       'start_date': 'str'
+    #       'end_date': 'str'
+    #    }
+    #  } 
     fields = event.get('body') if event.get('body') else {}
     kwargs = {}
     # Want to check if start date is non empty but also assign it

@@ -12,6 +12,7 @@ def lambda_handler(event, context):
     # Arguments:
     # event = 
     # {
+    #    user_id: 'str'
     #    miscellaneous
     # body = 
     #   {
