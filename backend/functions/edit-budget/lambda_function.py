@@ -25,11 +25,11 @@ def lambda_handler(event, context):
     #  } 
     try:
         fields = event.get('body')
-        budget_id = fields.get('budget_id')
+        budget_id = sanitize_id(fields.get('budget_id'))
 
         # This sends a full request, not just the changes
         budget = {
-            'user_id': event['requestContext']['authorizer']['claims']['sub'],
+            'user_id': sanitize_id(event['requestContext']['authorizer']['claims']['sub']),
             'budget_id' : budget_id,
             'name' : sanitize_name(fields.get('name')),
             'amount' : sanitize_amount(fields.get('amount')),

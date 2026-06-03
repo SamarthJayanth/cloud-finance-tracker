@@ -24,7 +24,7 @@ def lambda_handler(event, context):
     #    }
     #  } 
     fields = event.get('body') if event.get('body') else {}
-    user_id = event['requestContext']['authorizer']['claims']['sub'],
+    user_id = sanitize_id(event['requestContext']['authorizer']['claims']['sub'])
     kwargs = {}
     # Want to check if start date is non empty but also assign it
     # Also need to know which arguments to pass through, use kwargs

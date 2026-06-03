@@ -14,10 +14,9 @@ def lambda_handler(event, context):
     #  } 
     try:
         fields = event.get('body')
-        user_id = event['requestContext']['authorizer']['claims']['sub']
-        goal_id = fields.get('goal_id')
-        if not goal_id:
-            return ValueError('Goal_id is invalid')
+        user_id = sanitize_id(event['requestContext']['authorizer']['claims']['sub'])
+        goal_id = sanitize_id(fields.get('goal_id'))
+
         # Need id to get the actual goal id
         # For proper security, we must ensure that the request is sent by an authorized user
 

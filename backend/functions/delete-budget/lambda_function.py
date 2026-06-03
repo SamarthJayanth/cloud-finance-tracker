@@ -14,10 +14,9 @@ def lambda_handler(event, context):
     #  } 
     try:
         fields = event.get('body')
-        user_id = event['requestContext']['authorizer']['claims']['sub']
-        budget_id = fields.get('budget_id')
-        if not budget_id:
-            return ValueError('Budget_id is invalid')
+        user_id = sanitize_id(event['requestContext']['authorizer']['claims']['sub'])
+        budget_id = sanitize_id(fields.get('budget_id'))
+
         # Need id to get the actual budget id
         # For proper security, we must ensure that the request is sent by an authorized user
 

@@ -23,7 +23,7 @@ def lambda_handler(event, context):
     #  } 
     try:
         fields = event.get('body')
-        goal_id = fields.get('goal_id')
+        goal_id = sanitize_id(fields.get('goal_id'))
 
         # This sends a full request, not just the changes
         start_date = sanitize_date(fields.get('start_date'))
@@ -32,7 +32,7 @@ def lambda_handler(event, context):
             raise ValidInputError('Start date cannot be ahead of the end date')
         description = sanitize_description(fields.get('description')) if fields.get('description') else None
         goal = {
-            'user_id': event['requestContext']['authorizer']['claims']['sub'],
+            'user_id': sanitize_id(event['requestContext']['authorizer']['claims']['sub']),
             'goal_id': goal_id,
             'amount' : sanitize_amount(fields.get('amount')),
             'name' : sanitize_type(fields.get('name')),

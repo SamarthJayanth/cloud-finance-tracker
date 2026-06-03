@@ -14,10 +14,8 @@ def lambda_handler(event, context):
     #  } 
     try:
         fields = event.get('body')
-        user_id = event['requestContext']['authorizer']['claims']['sub']
-        income_id = fields.get('income_id')
-        if not income_id:
-            return ValueError('Income_id is invalid')
+        user_id = sanitize_id(event['requestContext']['authorizer']['claims']['sub'])
+        income_id = sanitize_id(fields.get('income_id'))
         # Need id to get the actual income id
         # For proper security, we must ensure that the request is sent by an authorized user
 

@@ -24,7 +24,7 @@ def lambda_handler(event, context):
     #  }
     try:
         fields = event.get('body')
-        user_id = event['requestContext']['authorizer']['claims']['sub']
+        user_id = sanitize_id(event['requestContext']['authorizer']['claims']['sub'])
         start_date = sanitize_date(fields.get('start_date'))
         end_date = sanitize_date(fields.get('end_date'))
         expenses_type = sanitize_type(fields.get('type')) if fields.get('type') else None 

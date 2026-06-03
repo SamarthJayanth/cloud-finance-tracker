@@ -25,8 +25,8 @@ def lambda_handler(event, context):
     #  } 
     try:
         fields = event.get('body')
-        budget_id = fields.get('budget_id')
-        user_id = event['requestContext']['authorizer']['claims']['sub'],
+        budget_id = sanitize_id(fields.get('budget_id'))
+        user_id = sanitize_id(event['requestContext']['authorizer']['claims']['sub']),
         budget = get_budget_by_id(user_id, budget_id)
         start_date, end_date = get_current_period(budget)
         start_date = str(start_date)

@@ -23,10 +23,10 @@ def lambda_handler(event, context):
     #  } 
     try:
         fields = event.get('body')
-        income_id = fields.get('income_id')
+        income_id = sanitize_id(fields.get('income_id'))
 
         income = {
-            'user_id': event['requestContext']['authorizer']['claims']['sub'],
+            'user_id': sanitize_id(event['requestContext']['authorizer']['claims']['sub']),
             'income_id' : income_id,
             'amount' : sanitize_amount(fields.get('amount')),
             'period' : sanitize_period(fields.get('period'), 'income'),

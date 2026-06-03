@@ -99,3 +99,9 @@ def sanitize_recurring(val):
         raise ValidInputError('Recurrence must be set to true or false')
     else:
         return bool(val)
+
+def sanitize_id(val):
+    if(not val):
+        raise ValueError('Id cannot be empty')
+    else:
+        return val

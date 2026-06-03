@@ -30,13 +30,13 @@ def lambda_handler(event, context) :
         fields = event.get('body')
         description = sanitize_description(fields.get('description')) if fields.get('description') else None
         expense = {
-            'user_id': event['requestContext']['authorizer']['claims']['sub'],
+            'user_id': sanitize_id(event['requestContext']['authorizer']['claims']['sub']),
             'name': sanitize_name(fields.get('name')),
             'amount': Decimal(round(sanitize_amount(fields.get('amount')), 2)),
             'type': sanitize_type(fields.get('type')),
             'date': sanitize_date(fields.get('date')),
             'description':description,
-            'expense_id': str(uuid.uuid4())
+            'expense_id': sanitize_id(str(uuid.uuid4()))
         }
         add_expense(expense)
         return {
