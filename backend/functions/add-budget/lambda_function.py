@@ -3,6 +3,7 @@ import uuid
 
 from input_sanitize import *
 from errors import *
+from budget_queries import *
 def lambda_handler(event, context):
     # Receives input details of a specific budget from user
     # Assigns an id and stores to database
@@ -38,7 +39,7 @@ def lambda_handler(event, context):
         }
         add_budget(budget)
         return {
-            'statusCode': 201,
+            'statusCode': 200,
             'body': json.dumps({
                 'message': 'Budget added successfully',
                 'budget': budget
