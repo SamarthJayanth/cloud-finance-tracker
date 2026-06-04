@@ -1,11 +1,21 @@
 from errors import *
 from datetime import datetime, date
 from decimal import Decimal, InvalidOperation
+import json
 
 # Create functions for period, name, etc
 # Create allowable name types for entry
 
 
+# This function is called when json encounters an object it cannot serialize
+class DecimalEncoder(json.JSONEncoder):
+    # Calls default, returns float type which is serializable
+    def default(self, obj):
+        if(isinstance(obj, Decimal)):
+            return float(obj)
+        # If the object is not Decimal type, then we allow json to raise the error
+        return super().default(obj) 
+    
 def sanitize_amount(val):   
     try:
         amount = Decimal(str(val))    

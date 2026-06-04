@@ -33,7 +33,7 @@ def lambda_handler(event, context):
             'name': sanitize_name(fields.get('name')),
             'period': period,
             'income_id': sanitize_id(str(uuid.uuid4())),
-            'start_date': sanitize_date(fields.get('date')),
+            'start_date': sanitize_date(fields.get('start_date')),
             'description': description
         }
         add_income(income)

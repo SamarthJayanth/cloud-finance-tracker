@@ -3,7 +3,7 @@ import uuid
 from decimal import Decimal # DynamoDB doesn't take float values
 from input_sanitize import * # comes from layer automatically
 from errors import * # comes from layer automatically
-
+from expense_queries import *
 
 # event contains data from the API call
 # Will also authenticate users
@@ -32,7 +32,7 @@ def lambda_handler(event, context) :
         expense = {
             'user_id': sanitize_id(event['requestContext']['authorizer']['claims']['sub']),
             'name': sanitize_name(fields.get('name')),
-            'amount': Decimal(round(sanitize_amount(fields.get('amount')), 2)),
+            'amount': (round(sanitize_amount(fields.get('amount')), 2)),
             'type': sanitize_type(fields.get('type')),
             'date': sanitize_date(fields.get('date')),
             'description':description,
