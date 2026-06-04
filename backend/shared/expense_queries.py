@@ -15,13 +15,15 @@ table = dynamodb.Table('expenses')
 # Event will pass the type of call
 # This can be either a range of dates, after/before, above/below an amount
 earliest_date = '2000-01-01'
-def get_expenses(user_id, start_date: str = earliest_date, end_date: str = None,
+def get_expenses(user_id, name: str = None, start_date: str = earliest_date, end_date: str = None,
                  expense_type: str = None, min_amount: float = None, max_amount: float = None):
     # Returns list of expense records matching filters
     if end_date is None:
         end_date = str(date.today())
     try:
         filter_expr = Attr('date').between(start_date, end_date)
+        if name:
+            filter_expr = filter_expr & Attr('name').eq(name)
         if expense_type:
             filter_expr = filter_expr & Attr('type').eq(expense_type)
         if min_amount is not None: # Evaluate here because min amt could be 0
@@ -38,10 +40,10 @@ def get_expenses(user_id, start_date: str = earliest_date, end_date: str = None,
         raise DataBaseError('Failed to get expenses')
     
 
-def get_total_expenses(user_id, start_date: str = earliest_date, end_date: str = None,
+def get_total_expenses(user_id, name: str = None, start_date: str = earliest_date, end_date: str = None,
                        expense_type: str = None, min_amount: float = None, max_amount: float = None):
     # Returns single sum — just calls get_expenses and sums
-    items = get_expenses(user_id, start_date, end_date, expense_type, min_amount, max_amount)
+    items = get_expenses(user_id, name, start_date, end_date, expense_type, min_amount, max_amount)
     return sum(item.get('amount') for item in items)
 def add_expense(expense: dict):
     try:

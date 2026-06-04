@@ -23,13 +23,15 @@ def get_goal_by_id(user_id: str, goal_id: str) -> dict | None:
         print(f'DynamoDB error: {str(e)}')
         raise DataBaseError('Failed to get goal')
     
-def get_goals(user_id: str, start_date: str = earliest_date, end_date: str = None,
+def get_goals(user_id: str, name: str = None, start_date: str = earliest_date, end_date: str = None,
                  min_amount: float = None, max_amount: float = None):
     # Returns list of expense records matching filters
     if end_date is None:
         end_date = str(date.today())
     try:
         filter_expr = Attr('start_date').between(start_date, end_date)
+        if name:
+            filter_expr = filter_expr & Attr('name').eq(name)
         if min_amount is not None: # Evaluate here because min amt could be 0
             filter_expr = filter_expr & Attr('amount').gt(min_amount)
         if max_amount is not None: 

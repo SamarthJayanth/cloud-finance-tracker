@@ -11,13 +11,15 @@ table = dynamodb.Table('budgets')
 
 earliest_date = '2000-01-01'
 
-def get_budgets(user_id, start_date: str = earliest_date, end_date: str = None, budget_type: str = None,
+def get_budgets(user_id, name:str = None, start_date: str = earliest_date, end_date: str = None, budget_type: str = None,
                  min_amount: float = None, max_amount: float = None, period: str = None):
     # Returns list of budget records matching filters
     if end_date is None:
         end_date = str(date.today())
     try:
         filter_expr = Attr('date').between(start_date, end_date)
+        if name:
+            filter_expr = filter_expr & Attr('name').eq(name)
         if budget_type is not None:
             filter_expr = filter_expr & Attr('type').eq(budget_type)
         if min_amount is not None: # Evaluate here because min amt could be 0
