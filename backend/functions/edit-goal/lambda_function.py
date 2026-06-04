@@ -3,6 +3,7 @@ import json
 
 from input_sanitize import *
 from errors import *
+from goal_queries import *
 
 def lambda_handler(event, context):
     # Edits the details of a previously made goal
@@ -27,7 +28,7 @@ def lambda_handler(event, context):
 
         # This sends a full request, not just the changes
         start_date = sanitize_date(fields.get('start_date'))
-        end_date = sanitize_date(fields.get('end_date'))
+        end_date = sanitize_date(fields.get('end_date'), allow_future = True)
         if (start_date > end_date):
             raise ValidInputError('Start date cannot be ahead of the end date')
         description = sanitize_description(fields.get('description')) if fields.get('description') else None
@@ -35,7 +36,7 @@ def lambda_handler(event, context):
             'user_id': sanitize_id(event['requestContext']['authorizer']['claims']['sub']),
             'goal_id': goal_id,
             'amount' : sanitize_amount(fields.get('amount')),
-            'name' : sanitize_type(fields.get('name')),
+            'name' : sanitize_name(fields.get('name')),
             'description' : description,
             'start_date' : start_date,
             'end_date' : end_date,

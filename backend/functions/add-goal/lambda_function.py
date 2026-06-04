@@ -26,7 +26,7 @@ def lambda_handler(event, context):
         fields = event.get('body')
         description = sanitize_description(fields.get('description')) if fields.get('description') else None
         start_date = sanitize_date(fields.get('start_date'))
-        end_date = sanitize_date(fields.get('end_date'))
+        end_date = sanitize_date(fields.get('end_date'), allow_future = True)
         if (start_date > end_date):
             raise ValidInputError('Start date cannot be ahead of the end_date')
         goal = {

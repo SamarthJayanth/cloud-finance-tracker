@@ -1,4 +1,7 @@
 import json
+from input_sanitize import *
+from errors import *
+from goal_queries import *
 
 def lambda_handler(event, context):
     # Deletes a goal from database

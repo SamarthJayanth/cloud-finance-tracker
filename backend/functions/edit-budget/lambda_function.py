@@ -3,7 +3,7 @@ import json
 
 from input_sanitize import *
 from errors import *
-
+from budget_queries import *
 def lambda_handler(event, context):
     # Edits the details of a previously made budget
     # Arguments:
@@ -15,7 +15,7 @@ def lambda_handler(event, context):
     #   {
     #       'amount' : 'num' 
     #       'type': 'str'
-    #       'date': 'YYYY-MM-DD'
+    #       'start_date': 'YYYY-MM-DD'
     #       'period': 'str' one of allotted types
     #       'description': 'str'
     #       'is_recurring': 'bool'
@@ -35,7 +35,7 @@ def lambda_handler(event, context):
             'amount' : sanitize_amount(fields.get('amount')),
             'period' : sanitize_period(fields.get('period')),
             'type' : sanitize_type(fields.get('type')),
-            'date' : sanitize_date(fields.get('date')),
+            'start_date' : sanitize_date(fields.get('start_date')),
             'is_recurring' : sanitize_recurring(fields.get('is_recurring')),
             'description' : sanitize_description(fields.get('description')) if fields.get('description') else None
         }

@@ -2,7 +2,6 @@ import json
 from datetime import datetime, date, timedelta
 from dateutil.relativedelta import relativedelta
 
-sys.path.append(os.path.join(os.path.dirname(__file__), '../../shared'))
 from input_sanitize import *
 from expense_queries import *
 
@@ -30,7 +29,7 @@ def lambda_handler(event, context):
         if(delta_days.days < 0):
             raise ValidInputError("Start date must be before end date")
         
-        expense_sum = float(get_total_expenses(user_id = user_id, start_date = start_date, end_date = end_date, type = expenses_type))
+        expense_sum = float(get_total_expenses(user_id = user_id, start_date = start_date, end_date = end_date, expense_type = expenses_type))
         
         average = round(expense_sum/(delta_days.days + 1), 2)
         return {

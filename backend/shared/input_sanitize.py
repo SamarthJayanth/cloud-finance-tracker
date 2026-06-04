@@ -56,7 +56,7 @@ def sanitize_name(val):
     # Can also have predetermined expense names(user can add them)
     return val
 
-def sanitize_date(val):
+def sanitize_date(val, allow_future: bool = False):
     # Date is of the form YYYY-MM-DD
     if(val == None):
         raise ValidInputError('Date is required') 
@@ -68,10 +68,10 @@ def sanitize_date(val):
         date_parsed = datetime.strptime(val, '%Y-%m-%d').date()
     except ValueError:
         raise ValidInputError('Date must be a valid date')
-    if (date_parsed > date.today()):
-        raise ValidInputError('Date cannot be in the future')
     if (date_parsed < date(2000, 1, 1)):
         raise ValidInputError('Date cannot be too far in the past')
+    if (not allow_future) and (date_parsed > date.today()):
+        raise ValidInputError('Date cannot be in the future')
     return str(date_parsed)
 #Check dates in the future as well, import date lib
 

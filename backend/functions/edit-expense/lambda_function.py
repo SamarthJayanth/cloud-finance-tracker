@@ -1,7 +1,9 @@
+from datetime import datetime, date
 import json
 
 from input_sanitize import *
-
+from errors import *
+from expense_queries import *
 def lambda_handler(event, context):
     # Edits a previously added expense
     # Arguments:
@@ -22,7 +24,7 @@ def lambda_handler(event, context):
     # fields = json.loads(event.get('body')) for an API call
     try:    
         fields = event.get('body')
-        expense_id = sanitize_id(fields.get('id'))
+        expense_id = sanitize_id(fields.get('expense_id'))
         expense = {
             'user_id': sanitize_id(event['requestContext']['authorizer']['claims']['sub']),
             'expense_id': expense_id,

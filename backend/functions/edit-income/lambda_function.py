@@ -3,6 +3,7 @@ import json
 
 from input_sanitize import *
 from errors import *
+from income_queries import *
 
 def lambda_handler(event, context):
     # Edits the details of a previously made income
