@@ -10,7 +10,7 @@ dynamodb = boto3.resource('dynamodb', region_name = 'us-east-2')
 table = dynamodb.Table('incomes')
 
 earliest_date = '2000-01-01'
-def get_incomes(start_date: str = earliest_date, end_date: str = None,
+def get_incomes(user_id, start_date: str = earliest_date, end_date: str = None,
                  min_amount: float = None, max_amount: float = None, period: str = None):
     # Returns list of income records matching filters
     if end_date is None:
@@ -23,30 +23,33 @@ def get_incomes(start_date: str = earliest_date, end_date: str = None,
             filter_expr = filter_expr & Attr('amount').lt(max_amount)
         if period is not None:
             filter_expr = filter_expr & Attr('period').eq(period)
-        response = table.scan(FilterExpression = filter_expr)
+        response = table.query(
+            KeyConditionExpression = Key('user_id').eq(user_id),
+            FilterExpression = filter_expr
+            )
         return response.get('Items', [])
     except Exception as e:
         print(f'Dynamodb error: {str(e)}')
         raise DataBaseError('Failed to get incomes')
-def get_total_income(start_date: str = earliest_date, end_date: str = None,
+def get_total_income(user_id, start_date: str = earliest_date, end_date: str = None,
                  min_amount: float = None, max_amount: float = None, period: str = None):
-    incomes = get_incomes(start_date, end_date, min_amount, max_amount, period)
+    incomes = get_incomes(user_id, start_date, end_date, min_amount, max_amount, period)
     return sum(income.get('amount') for income in incomes)
     
 income_config = {'one-time' : 1, 'weekly' : 52, 'biweekly' : 26, 'monthly' : 12, 'quarterly' : 4, 'yearly' : 1}
-def get_total_yearly_income(start_date: str = earliest_date, end_date: str = None,
+def get_total_yearly_income(user_id, start_date: str = earliest_date, end_date: str = None,
                         min_amount: float = None, max_amount: float = None, period: str = None):
     # Returns single sum — just calls get_incomes and sums
-    items = get_incomes(start_date, end_date, min_amount, max_amount, period)
+    items = get_incomes(user_id, start_date, end_date, min_amount, max_amount, period)
     sum_items = 0
     for item in items:
         sum_items = sum_items + item.get('amount')*(income_config.get(item.get('period')))
     return sum_items
 
-def get_total_yearly_recurring_income(start_date: str = earliest_date, end_date: str = None,
+def get_total_yearly_recurring_income(user_id, start_date: str = earliest_date, end_date: str = None,
                         min_amount: float = None, max_amount: float = None, period: str = None):
     # Returns single sum — just calls get_incomes and sums
-    items = get_incomes(start_date, end_date, min_amount, max_amount, period)
+    items = get_incomes(user_id, start_date, end_date, min_amount, max_amount, period)
     sum_items = 0
     for item in items:
         if(item.get('period') == 'one-time'):
@@ -54,9 +57,10 @@ def get_total_yearly_recurring_income(start_date: str = earliest_date, end_date:
         sum_items = sum_items + item.get('amount')*(income_config.get(item.get('period')))
     return sum_items
 
-def get_recurring_income():
+def get_recurring_income(user_id):
     try:    
-        response = table.scan(
+        response = table.query(
+            KeyConditionExpression = Key('user_id').eq(user_id),
             FilterExpression = Attr('period').ne('one-time')
         )
         return response.get('Items', [])
@@ -73,7 +77,8 @@ def add_income(income: dict):
 def edit_income(income: dict) -> dict | None:
     # Updates specific fields on a income
     # Only keys present in updates are changed
-    income_id = income.pop('id')
+    income_id = income.pop('income_id')
+    user_id = income.pop('user_id')
     try:
         update_parts = []
         expr_attr_names = {}
@@ -85,9 +90,10 @@ def edit_income(income: dict) -> dict | None:
         update_expr = 'SET '+' , '.join(update_parts)
         table.update_item(
             Key = {
-                'id': income_id
+                'user_id': user_id,
+                'income_id': income_id
             },
-            ConditionExpression = Attr('id').exists(),
+            ConditionExpression = Attr('income_id').exists(),
             UpdateExpression = update_expr,
             ExpressionAttributeNames = expr_attr_names,
             ExpressionAttributeValues = expr_attr_vals
@@ -101,19 +107,22 @@ def edit_income(income: dict) -> dict | None:
         print(f'DynamoDB error {str(e)}')
         raise DataBaseError('Failed to update income')
     
-def delete_income(income_id: str):
+def delete_income(user_id, income_id: str):
     # Deletes an income by id
     try:
-        table.delete_item(Key = {'id': income_id})
+        table.delete_item(Key = {'user_id': user_id, 'income_id': income_id})
     except Exception as e:
         print(f'DynamoDB error: {str(e)}')
         raise DataBaseError('Failed to delete income')
 
-def get_income_by_id(income_id: str) -> dict | None:
+def get_income_by_id(user_id, income_id: str) -> dict | None:
     # Fetches a single income by id, returns None if not found
     try:
-        response = table.query(KeyConditionExpression = Key('id').eq(income_id))
-        income = response.get('Items')[0] if response.get('Items') else None
+        response = table.get_item(Key = {
+            'user_id': user_id,
+            'income_id': income_id
+        })
+        income = response.get('Item')
         # return from income_table
         return income
     except Exception as e:

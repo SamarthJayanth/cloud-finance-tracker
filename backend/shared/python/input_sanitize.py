@@ -1,5 +1,6 @@
 from errors import *
 from datetime import datetime, date
+from decimal import Decimal, InvalidOperation
 
 # Create functions for period, name, etc
 # Create allowable name types for entry
@@ -7,8 +8,8 @@ from datetime import datetime, date
 
 def sanitize_amount(val):   
     try:
-        amount = float(val)    
-    except (ValueError, TypeError):
+        amount = Decimal(str(val))    
+    except (ValueError, TypeError, InvalidOperation):
         raise ValidInputError('Amount must be a number')
     if(amount < 0):
         raise ValidInputError('Amount must be positive')
@@ -95,7 +96,17 @@ def sanitize_period(val, record_type = 'budget'):
         raise ValidInputError('Period cannot be different than allowed types')
     return val
 def sanitize_recurring(val):
-    if(not isinstance(val, bool)):
-        raise ValidInputError('Recurrence must be set to true or false')
+    if(isinstance(val, bool)):
+        return val
+    if(isinstance(val, str)):
+        if(val.strip().lower() == 'true'):
+            return True
+        if(val.strip().lower() == 'false'):
+            return False
+        
+    raise ValidInputError('Recurrence must be set to true or false')
+def sanitize_id(val):
+    if(not val):
+        raise ValueError('Id cannot be empty')
     else:
-        return bool(val)
+        return val

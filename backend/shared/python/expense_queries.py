@@ -15,7 +15,7 @@ table = dynamodb.Table('expenses')
 # Event will pass the type of call
 # This can be either a range of dates, after/before, above/below an amount
 earliest_date = '2000-01-01'
-def get_expenses(start_date: str = earliest_date, end_date: str = None,
+def get_expenses(user_id, start_date: str = earliest_date, end_date: str = None,
                  expense_type: str = None, min_amount: float = None, max_amount: float = None):
     # Returns list of expense records matching filters
     if end_date is None:
@@ -28,17 +28,20 @@ def get_expenses(start_date: str = earliest_date, end_date: str = None,
             filter_expr = filter_expr & Attr('amount').gt(min_amount)
         if max_amount is not None: 
             filter_expr = filter_expr & Attr('amount').lt(max_amount)
-        response = table.scan(FilterExpression = filter_expr)
+        response = table.query(
+            KeyConditionExpression = Key('user_id').eq(user_id),
+            FilterExpression = filter_expr
+            )
         return response.get('Items', [])
     except Exception as e:
         print(f'Dynamodb error: {str(e)}')
         raise DataBaseError('Failed to get expenses')
     
 
-def get_total_expenses(start_date: str = earliest_date, end_date: str = None,
+def get_total_expenses(user_id, start_date: str = earliest_date, end_date: str = None,
                        expense_type: str = None, min_amount: float = None, max_amount: float = None):
     # Returns single sum — just calls get_expenses and sums
-    items = get_expenses(start_date, end_date, expense_type, min_amount, max_amount)
+    items = get_expenses(user_id, start_date, end_date, expense_type, min_amount, max_amount)
     return sum(item.get('amount') for item in items)
 def add_expense(expense: dict):
     try:
@@ -48,7 +51,8 @@ def add_expense(expense: dict):
         raise DataBaseError('Failed to save expense')
 
 def edit_expense(expense: dict):
-    expense_id = expense.pop('id') # So id is not updated
+    expense_id = expense.pop('expense_id') # So id is not updated
+    user_id = expense.pop('user_id')
     try: 
         update_parts = []
         expr_attr_names = {}
@@ -62,9 +66,10 @@ def edit_expense(expense: dict):
         update_expr = 'SET ' + ', '.join(update_parts)      # join all pairs at end
         table.update_item(
     Key={
-        'id': expense_id,
+        'user_id': user_id,
+        'expense_id': expense_id
     },
-    ConditionExpression = Attr('id').exists(),
+    ConditionExpression = Attr('expense_id').exists(),
     UpdateExpression = update_expr,
     ExpressionAttributeNames = expr_attr_names,
     ExpressionAttributeValues = expr_attr_vals
@@ -79,18 +84,21 @@ def edit_expense(expense: dict):
         raise DataBaseError('Failed to update expense')
     
 
-def delete_expense(expense_id: str):
+def delete_expense(user_id, expense_id: str):
     try:
-        table.delete_item(Key = {'id': expense_id})
+        table.delete_item(Key = {'user_id': user_id, 'expense_id': expense_id})
     except Exception as e:
         print(f'DynamoDB error: {str(e)}')
         raise DataBaseError('Failed to delete expense')
     
 
-def expense_by_id(expense_id: str):
+def expense_by_id(user_id, expense_id: str):
     try:
-        response = table.query(KeyConditionExpression = Key('id').eq(expense_id))
-        return response.get('Items')[0] if response.get('Items') else None
+        response = table.get_item(Key = {
+            'user_id': user_id,
+            'expense_id': expense_id
+        })
+        return response.get('Item')
     except Exception as e:
         print(f'DynamoDB error: {str(e)}')
         raise DataBaseError('Failed to retrieve expense')

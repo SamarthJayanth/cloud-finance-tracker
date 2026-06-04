@@ -11,7 +11,7 @@ table = dynamodb.Table('budgets')
 
 earliest_date = '2000-01-01'
 
-def get_budgets(start_date: str = earliest_date, end_date: str = None, budget_type: str = None,
+def get_budgets(user_id, start_date: str = earliest_date, end_date: str = None, budget_type: str = None,
                  min_amount: float = None, max_amount: float = None, period: str = None):
     # Returns list of budget records matching filters
     if end_date is None:
@@ -26,16 +26,20 @@ def get_budgets(start_date: str = earliest_date, end_date: str = None, budget_ty
             filter_expr = filter_expr & Attr('amount').lt(max_amount)
         if period is not None:
             filter_expr = filter_expr & Attr('period').eq(period)
-        response = table.scan(FilterExpression = filter_expr)
+        response = table.query(
+            KeyConditionExpression = Key('user_id').eq(user_id),
+            FilterExpression = filter_expr
+            )
         return response.get('Items', [])
     except Exception as e:
         print(f'Dynamodb error: {str(e)}')
         raise DataBaseError('Failed to get budgets')
+    
 budget_config = {'weekly' : 52, 'biweekly' : 26, 'monthly' : 12, 'quarterly' : 4, 'yearly' : 1}
-def get_total_yearly_budget(start_date: str = earliest_date, end_date: str = None, budget_type: str = None,
+def get_total_yearly_budget(user_id, start_date: str = earliest_date, end_date: str = None, budget_type: str = None,
                  min_amount: float = None, max_amount: float = None, period: str = None):
     # Returns single sum — just calls get_budgets and sums
-    items = get_budgets(start_date, end_date, budget_type, min_amount, max_amount, period)
+    items = get_budgets(user_id, start_date, end_date, budget_type, min_amount, max_amount, period)
     sum_items = 0
     for item in items:
         sum_items = sum_items + item.get('amount')*(budget_config.get(item.get('period')))
@@ -49,7 +53,8 @@ def add_budget(budget: dict):
 def edit_budget(budget: dict):
     # Updates specific fields on a budget
     # Only keys present in updates are changed
-    budget_id = budget.pop('id')
+    budget_id = budget.pop('budget_id')
+    user_id = budget.pop('user_id')
     try:
         update_parts = []
         expr_attr_names = {}
@@ -61,9 +66,10 @@ def edit_budget(budget: dict):
         update_expr = 'SET '+' , '.join(update_parts)
         table.update_item(
             Key = {
-                'id': budget_id
+                'user_id': user_id,
+                'budget_id': budget_id
             },
-            ConditionExpression = Attr('id').exists(),
+            ConditionExpression = Attr('budget_id').exists(),
             UpdateExpression = update_expr,
             ExpressionAttributeNames = expr_attr_names,
             ExpressionAttributeValues = expr_attr_vals
@@ -76,19 +82,23 @@ def edit_budget(budget: dict):
     except Exception as e:
         print(f'DynamoDB error {str(e)}')
         raise DataBaseError('Failed to update budget')
-def delete_budget(budget_id: str):
+    
+def delete_budget(user_id, budget_id: str):
     # Deletes an budget by id
     try:
-        table.delete_item(Key = {'id': budget_id})
+        table.delete_item(Key = {'user_id': user_id, 'budget_id': budget_id})
     except Exception as e:
         print(f'DynamoDB error: {str(e)}')
         raise DataBaseError('Failed to delete budget')
 
-def get_budget_by_id(budget_id: str) -> dict | None:
+def get_budget_by_id(user_id, budget_id: str) -> dict | None:
     # Fetches a single budget by id, returns None if not found
     try:
-        response = table.query(KeyConditionExpression = Key('id').eq(budget_id))
-        budget = response.get('Items')[0] if response.get('Items') else None
+        response = table.get_item(Key = {
+            'user_id': user_id,
+            'budget_id': budget_id
+        })
+        budget = response.get('Item')
         # return from budget_table
         return budget
     except Exception as e:
