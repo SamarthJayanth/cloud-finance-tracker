@@ -4,7 +4,7 @@ from datetime import date, datetime
 
 from input_sanitize import *
 from errors import *
-
+from goal_queries import *
 def lambda_handler(event, context):
     # Sets a goal for a user to hit 
     # Goal is an amount saved in some time
@@ -44,13 +44,13 @@ def lambda_handler(event, context):
             'body': json.dumps({
                 'message': 'Goal added successfully',
                 'goal_id': goal.get('goal_id')
-            })
+            }, cls = DecimalEncoder)
         }
     except ValidInputError as e:
         return {'body': json.dumps({'error': str(e)})}
     except DataBaseError as e:
         return {'body': json.dumps({'error': str(e)})}
-    except Exception:
-        print(f'Unexpected rrror: {str(e)}')
+    except Exception as e:
+        print(f'Unexpected error: {str(e)}')
         return {'body': json.dumps({'error': 'Internal Server Error'})}
         # Save to database

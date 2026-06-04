@@ -3,7 +3,7 @@ import json
 from budget_utils import *
 from input_sanitize import *
 from expense_queries import *
-
+from budget_queries import *
 
 def lambda_handler(event, context):
     # Notifies if 80% of any budget has been used
@@ -38,7 +38,7 @@ def lambda_handler(event, context):
                 'statusCode': 201,
                 'body': json.dumps({
                     'all_budget_alerts': all_budgets_alerts
-                })
+                }, cls = DecimalEncoder)
             }
     except ValidInputError as e:
         return {'body': json.dumps({'error': str(e)})}

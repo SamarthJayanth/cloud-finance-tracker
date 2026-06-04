@@ -45,7 +45,7 @@ def lambda_handler(event, context):
             'body': json.dumps({
                 'message': 'Budget added successfully',
                 'budget_id': budget.get('budget_id')
-            })
+            }, cls = DecimalEncoder)
         }
     except ValidInputError as e:
         return {'body': json.dumps({'error': str(e)})}

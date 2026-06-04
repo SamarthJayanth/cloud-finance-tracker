@@ -44,7 +44,7 @@ def lambda_handler(event, context) :
             'body': json.dumps({
                 'message': 'Expense added successfully',
                 'expense_id': expense.get('expense_id')
-            })
+            }, cls = DecimalEncoder)
         }
         #Save to Database
         # try:

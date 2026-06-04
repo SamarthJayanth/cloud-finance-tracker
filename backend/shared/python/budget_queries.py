@@ -10,12 +10,14 @@ dynamodb = boto3.resource('dynamodb', region_name = 'us-east-2')
 table = dynamodb.Table('budgets')
 
 earliest_date = '2000-01-01'
-def get_budgets(user_id, name:str = None, start_date: str = earliest_date, end_date: str = None, budget_type: str = None,
-                 min_amount: float = None, max_amount: float = None, period: str = None):
+
+def get_budgets(user_id, name: str = None, start_date: str = earliest_date, end_date: str = None, budget_type: str = None,
+                 min_amount: float = None, max_amount: float = None, period: str = None, is_recurring = None):
     # Returns list of budget records matching filters
     if end_date is None:
         end_date = str(date.today())
     try:
+
         filter_expr = Attr('date').between(start_date, end_date)
         if name:
             filter_expr = filter_expr & Attr('name').eq(name)
@@ -27,6 +29,8 @@ def get_budgets(user_id, name:str = None, start_date: str = earliest_date, end_d
             filter_expr = filter_expr & Attr('amount').lt(max_amount)
         if period is not None:
             filter_expr = filter_expr & Attr('period').eq(period)
+        if is_recurring is not None:
+            filter_expr = filter_expr & Attr('is_recurring').eq(is_recurring)
         response = table.query(
             KeyConditionExpression = Key('user_id').eq(user_id),
             FilterExpression = filter_expr
@@ -38,9 +42,9 @@ def get_budgets(user_id, name:str = None, start_date: str = earliest_date, end_d
     
 budget_config = {'weekly' : 52, 'biweekly' : 26, 'monthly' : 12, 'quarterly' : 4, 'yearly' : 1}
 def get_total_yearly_budget(user_id, start_date: str = earliest_date, end_date: str = None, budget_type: str = None,
-                 min_amount: float = None, max_amount: float = None, period: str = None):
+                 min_amount: float = None, max_amount: float = None, period: str = None, is_recurring = None):
     # Returns single sum — just calls get_budgets and sums
-    items = get_budgets(user_id, start_date, end_date, budget_type, min_amount, max_amount, period)
+    items = get_budgets(user_id, start_date, end_date, budget_type, min_amount, max_amount, period, is_recurring)
     sum_items = 0
     for item in items:
         sum_items = sum_items + item.get('amount')*(budget_config.get(item.get('period')))

@@ -3,6 +3,7 @@ import json
 
 from input_sanitize import *
 from errors import *
+from income_queries import *
 def lambda_handler(event, context):
     # Adds an income to the database
     # Arguments
@@ -41,13 +42,13 @@ def lambda_handler(event, context):
             'body': json.dumps({
                 'message': 'Income added successfully',
                 'income_id': income.get('income_id')
-            })
+            }, cls = DecimalEncoder)
         }
     except ValidInputError as e:
         return {'body': json.dumps({'error': str(e)})}
     except DataBaseError as e:
         return {'body': json.dumps({'error': str(e)})}
-    except Exception:
-        print(f'Unexpected rrror: {str(e)}')
+    except Exception as e:
+        print(f'Unexpected error: {str(e)}')
         return {'body': json.dumps({'error': 'Internal Server Error'})}
     # Save to database

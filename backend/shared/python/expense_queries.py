@@ -40,10 +40,10 @@ def get_expenses(user_id, name: str = None, start_date: str = earliest_date, end
         raise DataBaseError('Failed to get expenses')
     
 
-def get_total_expenses(user_id, start_date: str = earliest_date, end_date: str = None,
+def get_total_expenses(user_id, name: str = None, start_date: str = earliest_date, end_date: str = None,
                        expense_type: str = None, min_amount: float = None, max_amount: float = None):
     # Returns single sum — just calls get_expenses and sums
-    items = get_expenses(user_id, start_date, end_date, expense_type, min_amount, max_amount)
+    items = get_expenses(user_id, name, start_date, end_date, expense_type, min_amount, max_amount)
     return sum(item.get('amount') for item in items)
 def add_expense(expense: dict):
     try:
