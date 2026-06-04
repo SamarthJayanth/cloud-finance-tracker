@@ -32,8 +32,8 @@ def lambda_handler(event, context):
             'amount' : sanitize_amount(fields.get('amount')),
             'period' : sanitize_period(fields.get('period'), 'income'),
             'name' : sanitize_name(fields.get('name')),
-            'start_date' : sanitize_date(fields.get('date')),
-            'description': sanitize_type(fields.get('description'))
+            'start_date' : sanitize_date(fields.get('start_date')),
+            'description': sanitize_description(fields.get('description'))
         }
 
         edit_income(income)

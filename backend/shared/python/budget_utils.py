@@ -69,10 +69,12 @@ def calculate_budget_status(amount_spent: float, amount_limit: float,
     #         'status':           str, 'on_track' / 'warning' / 'exceeded'
     #     }
     
-    today = date.today()
+    date_today = date.today()
+    start_date = datetime.strptime(start_date, '%Y-%m-%d').date()
+    end_date = datetime.strptime(end_date, '%Y-%m-%d').date()
     days_total = (end_date - start_date).days + 1
-    days_elapsed = (today - start_date).days + 1
-    days_remaining = (end_date - today).days
+    days_elapsed = (date_today - start_date).days + 1
+    days_remaining = (end_date - date_today).days
 
     percentage_used = (amount_spent / amount_limit) * 100 if amount_limit > 0 else 0
     daily_average = amount_spent / days_elapsed if days_elapsed > 0 else 0

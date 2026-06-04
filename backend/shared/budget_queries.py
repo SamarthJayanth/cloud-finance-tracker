@@ -14,6 +14,8 @@ earliest_date = '2000-01-01'
 def get_budgets(user_id, name: str = None, start_date: str = earliest_date, end_date: str = None, budget_type: str = None,
                  min_amount: float = None, max_amount: float = None, period: str = None, is_recurring = None):
     # Returns list of budget records matching filters
+    if start_date is None:
+        start_date = earliest_date
     if end_date is None:
         end_date = str(date.today())
     try:
@@ -96,7 +98,7 @@ def delete_budget(user_id, budget_id: str):
         print(f'DynamoDB error: {str(e)}')
         raise DataBaseError('Failed to delete budget')
 
-def get_budget_by_id(user_id, budget_id: str) -> dict | None:
+def get_budget_by_id(user_id: str, budget_id: str) -> dict | None:
     # Fetches a single budget by id, returns None if not found
     try:
         response = table.get_item(Key = {

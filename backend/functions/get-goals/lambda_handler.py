@@ -14,23 +14,24 @@ def lambda_handler(event, context):
     #    user_id: 'str'
     # body = 
     #   {
+    #       'name': 'str'
     #       'min_amount' : 'num' 
     #       'max_amount': 'num'
-    #       'expense_type': 'str'
     #       'start_date': 'YYYY-MM-DD' default is 2000-01-01
     #       'end_date': 'YYYY-MM-DD' default is current day
     #    }
     #  } 
     try:
         fields = event.get('body')
-        expenses = get_expenses(
+        goals = get_goals(
         user_id = sanitize_id(event['requestContext']['authorizer']['claims']['sub']),
         name = sanitize_name(fields.get('name')) if fields.get('name') else None,
         min_amount = sanitize_amount(fields.get('min_amount')) if fields.get('min_amount') else None,
         max_amount = sanitize_amount(fields.get('max_amount')) if fields.get('max_amount') else None,
         start_date = sanitize_date(fields.get('start_date')) if fields.get('start_date') else None,
-        end_date = sanitize_date(fields.get('end_date', allow_future = True)) if fields.get('end_date') else None
+        end_date = sanitize_date(fields.get('end_date'), allow_future = True) if fields.get('end_date') else None
         )
+
         return {
             'statusCode': 200,
             'body': json.dumps({

@@ -13,6 +13,8 @@ earliest_date = '2000-01-01'
 def get_incomes(user_id, name: str = None, start_date: str = earliest_date, end_date: str = None,
                  min_amount: float = None, max_amount: float = None, period: str = None):
     # Returns list of income records matching filters
+    if start_date is None:
+        start_date = earliest_date
     if end_date is None:
         end_date = str(date.today())
     try:

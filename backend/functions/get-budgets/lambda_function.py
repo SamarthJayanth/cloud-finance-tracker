@@ -30,7 +30,7 @@ def lambda_handler(event, context):
         name = sanitize_name(fields.get('name')) if fields.get('name') else None,
         min_amount = sanitize_amount(fields.get('min_amount')) if fields.get('min_amount') else None,
         max_amount = sanitize_amount(fields.get('max_amount')) if fields.get('max_amount') else None,
-        budget_type = sanitize_type(fields.get('expense_type')) if fields.get('expense_type') else None,
+        budget_type = sanitize_type(fields.get('budget_type')) if fields.get('budget_type') else None,
         start_date = sanitize_date(fields.get('start_date')) if fields.get('start_date') else None,
         end_date = sanitize_date(fields.get('end_date')) if fields.get('end_date') else None,
         period = sanitize_period(fields.get('period')) if fields.get('period') else None,

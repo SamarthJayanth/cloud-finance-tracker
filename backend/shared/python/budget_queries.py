@@ -96,7 +96,7 @@ def delete_budget(user_id, budget_id: str):
         print(f'DynamoDB error: {str(e)}')
         raise DataBaseError('Failed to delete budget')
 
-def get_budget_by_id(user_id, budget_id: str) -> dict | None:
+def get_budget_by_id(user_id: str, budget_id: str) -> dict | None:
     # Fetches a single budget by id, returns None if not found
     try:
         response = table.get_item(Key = {
