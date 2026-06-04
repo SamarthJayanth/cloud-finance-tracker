@@ -1,10 +1,7 @@
 import json
-import sys
-import os
 from datetime import datetime, date, timedelta
 from dateutil.relativedelta import relativedelta
 
-sys.path.append(os.path.join(os.path.dirname(__file__), '../../shared'))
 from input_sanitize import *
 from budget_queries import *
 from expense_queries import *

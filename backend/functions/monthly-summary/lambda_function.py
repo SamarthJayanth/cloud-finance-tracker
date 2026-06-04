@@ -1,12 +1,9 @@
 import json
-import sys
-import os
 from datetime import date, datetime, timedelta
-
-sys.path.append(os.path.join(os.path.dirname(__file__), '../../shared'))
 
 from input_sanitize import *
 from expense_queries import *
+from income_queries import *
 def lambda_handler(event, context):
     # Returns a report of all expenses in the month
     # Maybe customize to be for any specific month

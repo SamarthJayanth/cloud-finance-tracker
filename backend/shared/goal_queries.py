@@ -29,7 +29,7 @@ def get_goals(user_id: str, name: str = None, start_date: str = earliest_date, e
     if end_date is None:
         end_date = str(date.today())
     try:
-        filter_expr = Attr('start_date').between(start_date, end_date)
+        filter_expr = Attr('start_date').between(start_date, end_date) | Attr('end_date').between(start_date, end_date)
         if name:
             filter_expr = filter_expr & Attr('name').eq(name)
         if min_amount is not None: # Evaluate here because min amt could be 0

@@ -10,7 +10,6 @@ dynamodb = boto3.resource('dynamodb', region_name = 'us-east-2')
 table = dynamodb.Table('budgets')
 
 earliest_date = '2000-01-01'
-
 def get_budgets(user_id, name:str = None, start_date: str = earliest_date, end_date: str = None, budget_type: str = None,
                  min_amount: float = None, max_amount: float = None, period: str = None):
     # Returns list of budget records matching filters

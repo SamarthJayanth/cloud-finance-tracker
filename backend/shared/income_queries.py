@@ -23,7 +23,7 @@ def get_incomes(user_id, name: str = None, start_date: str = earliest_date, end_
             filter_expr = filter_expr & Attr('amount').gt(min_amount)
         if max_amount is not None: 
             filter_expr = filter_expr & Attr('amount').lt(max_amount)
-        if period is not None:
+        if period:
             filter_expr = filter_expr & Attr('period').eq(period)
         response = table.query(
             KeyConditionExpression = Key('user_id').eq(user_id),
