@@ -27,11 +27,12 @@ def lambda_handler(event, context):
         total_expenses = get_total_expenses(user_id = user_id,start_date = start_date, end_date = end_date)
         total_income = get_total_income(user_id = user_id, start_date = start_date, end_date = end_date)
         return {
-            'body': {
+            'body': json.dumps({
+                'month': end_date.month,
                 'amount_spent': total_expenses,
                 'amount_earned': total_income,
                 'amount_saved': round(total_income - total_expenses, 2) if total_income > total_expenses else 0
-            }
+            }, cls = DecimalEncoder)
         }
     except ValidInputError as e:
         return {'body': json.dumps({'error': str(e)})}

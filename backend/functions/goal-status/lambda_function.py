@@ -36,7 +36,7 @@ def lambda_handler(event, context):
         total_expense = get_total_expenses(user_id = user_id, start_date = sanitize_date(start_date), end_date = str(date.today()))
         status = calculate_goal_status(amount_spent = total_expense, income_earned = total_income, target_savings = goal_amount, start_date = start_date, end_date = end_date)
         return {
-            'body': {
+            'body': json.dumps({
                     'user_id': user_id,
                     'goal_id':   goal_id,
                     'name': goal.get('name'),
@@ -44,7 +44,7 @@ def lambda_handler(event, context):
                     'end_date':    end_date,
                     'description': goal.get('description')
                     **status
-                }
+                }, cls = DecimalEncoder)
         }
     except ValidInputError as e:
         return {'body': json.dumps({'error': str(e)})}

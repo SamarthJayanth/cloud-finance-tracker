@@ -39,7 +39,7 @@ def lambda_handler(event, context):
             'body': json.dumps({
             'expenses': expenses, # Need to convert from decimal to float
             'count': len(expenses)
-        })
+        }, cls = DecimalEncoder)
     }
     except ValidInputError as e:
         return {'body': json.dumps({'error': str(e)})}

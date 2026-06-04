@@ -32,9 +32,16 @@ def lambda_handler(event, context):
         if(delta_days.days < 0):
             raise ValidInputError("Start date must be before end date")
         
-        expense_sum = get_total_expenses(user_id = user_id, start_date = start_date, end_date = end_date, type = expenses_type)
-
-        return round(expense_sum/(delta_days.days + 1), 2)
+        expense_sum = float(get_total_expenses(user_id = user_id, start_date = start_date, end_date = end_date, type = expenses_type))
+        
+        average = round(expense_sum/(delta_days.days + 1), 2)
+        return {
+            'statusCode': 201,
+            'body' : json.dumps({
+                'daily_average': average,
+                'period': {'start_date': start_date, 'end_date': end_date}
+            }, cls = DecimalEncoder)
+        }
     except ValidInputError as e:
         return {'body': json.dumps({'error': str(e)})}
     except DataBaseError as e:

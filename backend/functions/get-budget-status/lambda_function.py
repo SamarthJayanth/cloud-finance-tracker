@@ -41,7 +41,7 @@ def lambda_handler(event, context):
 
         status = calculate_budget_status(spent, limit, start_date, end_date)
         return {
-                'body': {
+                'body': json.dumps({
                     'user_id': event['requestContext']['authorizer']['claims']['sub'],
                     'budget_id':   budget_id,
                     'budget_name': budget.get('name'),
@@ -49,7 +49,7 @@ def lambda_handler(event, context):
                     'start_date':  start_date,
                     'end_date':    end_date,
                     **status
-                }
+                }, cls = DecimalEncoder)
         }
     except ValidInputError as e:
         return {'body': json.dumps({'error': str(e)})}

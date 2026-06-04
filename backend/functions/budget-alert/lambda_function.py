@@ -24,14 +24,22 @@ def lambda_handler(event, context):
         user_id = sanitize_id(event['requestContext']['authorizer']['claims']['sub'])
         # Retrieve all from database
         all_budgets = get_budgets(user_id = user_id)
+        all_budgets_alerts = {}
         for budget in all_budgets:
             # Call budget-status
             # Check amounts returned
             start_date, end_date = get_current_period(budget)
-            total_expenses = get_total_expenses(user_id = user_id, start_date = start_date, end_date = end_date)
+            total_expenses = float(get_total_expenses(user_id = user_id, start_date = start_date, end_date = end_date))
             full_status = calculate_budget_status(total_expenses, budget.get('amount', 0), start_date, end_date)
+            all_budgets_alerts[budget.get('budget_id')] = full_status.get('status')
             if (full_status.get('status') == 'warning'):
                 pass #Send alert
+            return {
+                'statusCode': 201,
+                'body': json.dumps({
+                    'all_budget_alerts': all_budgets_alerts
+                })
+            }
     except ValidInputError as e:
         return {'body': json.dumps({'error': str(e)})}
     except DataBaseError as e:
