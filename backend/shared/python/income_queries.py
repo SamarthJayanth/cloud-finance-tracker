@@ -10,13 +10,15 @@ dynamodb = boto3.resource('dynamodb', region_name = 'us-east-2')
 table = dynamodb.Table('incomes')
 
 earliest_date = '2000-01-01'
-def get_incomes(user_id, name: str = None, start_date: str = earliest_date, end_date: str = None,
+def get_incomes(user_id, name: str = None, start_date: str = None, end_date: str = None,
                  min_amount: float = None, max_amount: float = None, period: str = None):
     # Returns list of income records matching filters
+    if start_date is None:
+        start_date = earliest_date
     if end_date is None:
         end_date = str(date.today())
     try:
-        filter_expr = Attr('date').between(start_date, end_date)
+        filter_expr = Attr('start_date').between(start_date, end_date)
         if name:
             filter_expr = filter_expr & Attr('name').eq(name)
         if min_amount is not None: # Evaluate here because min amt could be 0
@@ -33,7 +35,7 @@ def get_incomes(user_id, name: str = None, start_date: str = earliest_date, end_
     except Exception as e:
         print(f'Dynamodb error: {str(e)}')
         raise DataBaseError('Failed to get incomes')
-def get_total_income(user_id, name:str = None, start_date: str = earliest_date, end_date: str = None,
+def get_total_income(user_id, name:str = None, start_date: str = None, end_date: str = None,
                  min_amount: float = None, max_amount: float = None, period: str = None):
     incomes = get_incomes(user_id, name, start_date, end_date, min_amount, max_amount, period)
     return sum(income.get('amount') for income in incomes)

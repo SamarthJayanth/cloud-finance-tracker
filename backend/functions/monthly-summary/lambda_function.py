@@ -19,13 +19,13 @@ def lambda_handler(event, context):
     try:
         fields = event.get('body')
         user_id = sanitize_id(event['requestContext']['authorizer']['claims']['sub'])
-        end_date = date.today()
-        start_date = date.today().replace(day = 1)
+        end_date = str(date.today())
+        start_date = str(date.today().replace(day = 1))
         total_expenses = get_total_expenses(user_id = user_id,start_date = start_date, end_date = end_date)
         total_income = get_total_income(user_id = user_id, start_date = start_date, end_date = end_date)
         return {
             'body': json.dumps({
-                'month': end_date.month,
+                'month': date.today().month,
                 'amount_spent': total_expenses,
                 'amount_earned': total_income,
                 'amount_saved': round(total_income - total_expenses, 2) if total_income > total_expenses else 0

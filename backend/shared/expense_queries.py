@@ -15,7 +15,7 @@ table = dynamodb.Table('expenses')
 # Event will pass the type of call
 # This can be either a range of dates, after/before, above/below an amount
 earliest_date = '2000-01-01'
-def get_expenses(user_id, name: str = None, start_date: str = earliest_date, end_date: str = None,
+def get_expenses(user_id, name: str = None, start_date: str = None, end_date: str = None,
                  expense_type: str = None, min_amount: float = None, max_amount: float = None):
     # Returns list of expense records matching filters
     if start_date is None:
@@ -42,7 +42,7 @@ def get_expenses(user_id, name: str = None, start_date: str = earliest_date, end
         raise DataBaseError('Failed to get expenses')
     
 
-def get_total_expenses(user_id, name: str = None, start_date: str = earliest_date, end_date: str = None,
+def get_total_expenses(user_id, name: str = None, start_date: str = None, end_date: str = None,
                        expense_type: str = None, min_amount: float = None, max_amount: float = None):
     # Returns single sum — just calls get_expenses and sums
     items = get_expenses(user_id, name, start_date, end_date, expense_type, min_amount, max_amount)

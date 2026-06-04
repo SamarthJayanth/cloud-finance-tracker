@@ -11,9 +11,11 @@ table = dynamodb.Table('budgets')
 
 earliest_date = '2000-01-01'
 
-def get_budgets(user_id, name: str = None, start_date: str = earliest_date, end_date: str = None, budget_type: str = None,
+def get_budgets(user_id, name: str = None, start_date: str = None, end_date: str = None, budget_type: str = None,
                  min_amount: float = None, max_amount: float = None, period: str = None, is_recurring = None):
     # Returns list of budget records matching filters
+    if start_date is None:
+        start_date = earliest_date
     if end_date is None:
         end_date = str(date.today())
     try:
@@ -41,7 +43,7 @@ def get_budgets(user_id, name: str = None, start_date: str = earliest_date, end_
         raise DataBaseError('Failed to get budgets')
     
 budget_config = {'weekly' : 52, 'biweekly' : 26, 'monthly' : 12, 'quarterly' : 4, 'yearly' : 1}
-def get_total_yearly_budget(user_id, start_date: str = earliest_date, end_date: str = None, budget_type: str = None,
+def get_total_yearly_budget(user_id, start_date: str = None, end_date: str = None, budget_type: str = None,
                  min_amount: float = None, max_amount: float = None, period: str = None, is_recurring = None):
     # Returns single sum — just calls get_budgets and sums
     items = get_budgets(user_id, start_date, end_date, budget_type, min_amount, max_amount, period, is_recurring)

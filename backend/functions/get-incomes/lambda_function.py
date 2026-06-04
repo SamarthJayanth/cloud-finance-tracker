@@ -15,9 +15,10 @@ def lambda_handler(event, context):
     #   {
     #       'min_amount' : 'num' 
     #       'max_amount': 'num'
-    #       'expense_type': 'str'
     #       'start_date': 'YYYY-MM-DD' default is 2000-01-01
     #       'end_date': 'YYYY-MM-DD' default is current day
+    #       'period': 'str'
+    #       'name': 'str'
     #    }
     #  } 
     try:

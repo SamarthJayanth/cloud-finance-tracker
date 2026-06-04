@@ -3,6 +3,8 @@ from dateutil.relativedelta import relativedelta
 
 def calculate_goal_status(amount_spent, target_savings, income_earned, start_date, end_date):
     date_today = date.today()
+    start_date = datetime.strptime(start_date, '%Y-%m-%d').date()
+    end_date = datetime.strptime(end_date, '%Y-%m-%d').date()
     days_total = (end_date - start_date).days + 1
     days_elapsed = (date_today - start_date).days + 1
     days_remaining = (end_date - date_today).days
