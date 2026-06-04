@@ -26,7 +26,6 @@ def lambda_handler(event, context):
             'statusCode': 201,
             'body': json.dumps({
                 'message': 'Goal deleted successfully',
-                'goal_id': goal_id
             })
         }
     except ValidInputError as e:

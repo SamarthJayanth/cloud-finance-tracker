@@ -43,7 +43,7 @@ def lambda_handler(event, context):
             'statusCode': 201,
             'body': json.dumps({
                 'message': 'Goal added successfully',
-                'goal': goal
+                'goal_id': goal.get('goal_id')
             })
         }
     except ValidInputError as e:

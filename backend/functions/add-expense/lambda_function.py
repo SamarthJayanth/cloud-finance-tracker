@@ -43,7 +43,7 @@ def lambda_handler(event, context) :
             'statusCode': 201,
             'body': json.dumps({
                 'message': 'Expense added successfully',
-                'expense': expense
+                'expense_id': expense.get('expense_id')
             })
         }
         #Save to Database

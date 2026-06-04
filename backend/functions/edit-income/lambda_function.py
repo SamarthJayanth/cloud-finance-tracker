@@ -40,8 +40,8 @@ def lambda_handler(event, context):
             'statusCode': 201,
             'body': json.dumps({
                 'message': 'Income edited successfully',
-                'income_id': income_id
-            })
+                'income': income
+            }, cls = DecimalEncoder)
         }
         
         #Save back to database

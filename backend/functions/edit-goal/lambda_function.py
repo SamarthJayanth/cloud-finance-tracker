@@ -47,8 +47,8 @@ def lambda_handler(event, context):
             'statusCode': 201,
             'body': json.dumps({
                 'message': 'Goal edited successfully',
-                'goal_id': goal_id
-            })
+                'goal': goal
+            }, cls = DecimalEncoder)
         }
         
         #Save back to database

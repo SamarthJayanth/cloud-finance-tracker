@@ -45,8 +45,8 @@ def lambda_handler(event, context):
             'statusCode': 201,
             'body': json.dumps({
                 'message': 'Budget edited successfully',
-                'budget_id': budget_id
-            })
+                'budget': budget
+            }, cls = DecimalEncoder)
         }
     except NotFoundError as e:
         return {'body': json.dumps({'error': str(e)})}

@@ -25,7 +25,6 @@ def lambda_handler(event, context):
             'statusCode': 201,
             'body': json.dumps({
                 'message': 'Income deleted successfully',
-                'income_id': income_id
             })
         }
     except ValidInputError as e:

@@ -36,7 +36,16 @@ def lambda_handler(event, context):
             'start_date': sanitize_date(fields.get('start_date')),
             'description': description
         }
+        
         add_income(income)
+
+        return {
+            'statusCode': 201,
+            'body': json.dumps({
+                'message': 'Income added successfully',
+                'income_id': income.get('income_id')
+            })
+        }
     except ValidInputError as e:
         return {'body': json.dumps({'error': str(e)})}
     except DataBaseError as e:
