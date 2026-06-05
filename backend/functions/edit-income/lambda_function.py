@@ -23,7 +23,7 @@ def lambda_handler(event, context):
     #    }
     #  } 
     try:
-        fields = event.get('body')
+        fields = json.loads(event.get('body', '{}'))
         income_id = sanitize_id(fields.get('income_id'))
 
         income = {

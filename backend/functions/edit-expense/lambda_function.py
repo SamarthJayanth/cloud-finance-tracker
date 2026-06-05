@@ -23,7 +23,7 @@ def lambda_handler(event, context):
     #  } 
     # fields = json.loads(event.get('body')) for an API call
     try:    
-        fields = event.get('body')
+        fields = json.loads(event.get('body', '{}'))
         expense_id = sanitize_id(fields.get('expense_id'))
         expense = {
             'user_id': sanitize_id(event['requestContext']['authorizer']['claims']['sub']),

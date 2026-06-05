@@ -22,7 +22,7 @@ def lambda_handler(event, context):
     #   }
     # }
     try:
-        fields = event.get('body')
+        fields = json.loads(event.get('body', '{}'))
         goal_id = sanitize_id(fields.get('goal_id'))
         user_id = sanitize_id(event['requestContext']['authorizer']['claims']['sub'])
         goal = get_goal_by_id(user_id, goal_id)

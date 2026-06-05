@@ -24,7 +24,7 @@ def lambda_handler(event, context):
     #    }
     #  } 
     try:
-        fields = event.get('body') if event.get('body') else {}
+        fields = json.loads(event.get('body', '{}'))
         user_id = sanitize_id(event['requestContext']['authorizer']['claims']['sub'])
         kwargs = {}
         # Want to check if start date is non empty but also assign it

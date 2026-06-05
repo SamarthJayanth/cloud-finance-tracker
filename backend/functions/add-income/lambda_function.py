@@ -21,7 +21,7 @@ def lambda_handler(event, context):
     #       }
     # }
     try:
-        fields = event.get('body')
+        fields = json.loads(event.get('body', '{}'))
 
         period = sanitize_period(fields.get('period'), 'income')
         description = sanitize_description(fields.get('description')) if fields.get('description') else None

@@ -16,7 +16,7 @@ def lambda_handler(event, context):
     #    }
     #  } 
     try:
-        fields = event.get('body')
+        fields = json.loads(event.get('body', '{}'))
         user_id = sanitize_id(event['requestContext']['authorizer']['claims']['sub'])
         income_id = sanitize_id(fields.get('income_id'))
         # Need id to get the actual income id

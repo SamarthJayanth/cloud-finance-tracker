@@ -20,7 +20,7 @@ def lambda_handler(event, context):
     #    }
     #  }
     try:
-        fields = event.get('body')
+        fields = json.loads(event.get('body', '{}'))
         user_id = sanitize_id(event['requestContext']['authorizer']['claims']['sub'])
         # Retrieve all from database
         all_budgets = get_budgets(user_id = user_id)

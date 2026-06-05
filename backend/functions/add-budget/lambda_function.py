@@ -24,7 +24,7 @@ def lambda_handler(event, context):
     #    }
     #  } 
     try:
-        fields = event.get('body')
+        fields = json.loads(event.get('body', '{}'))
         # Set a budget, can choose what category to use for this budget
         # Type can be for a timeframe, certain expense types, etc
         description = sanitize_description(fields.get('description')) if fields.get('description') else None

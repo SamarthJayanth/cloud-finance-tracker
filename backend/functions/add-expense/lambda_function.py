@@ -27,7 +27,7 @@ def lambda_handler(event, context) :
 
     # fields = json.loads(event.get('body')) for an API call
     try: 
-        fields = event.get('body')
+        fields = json.loads(event.get('body', {}))
         description = sanitize_description(fields.get('description')) if fields.get('description') else None
         expense = {
             'user_id': sanitize_id(event['requestContext']['authorizer']['claims']['sub']),

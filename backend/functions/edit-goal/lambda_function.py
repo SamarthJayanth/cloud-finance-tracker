@@ -23,7 +23,7 @@ def lambda_handler(event, context):
     #    }
     #  } 
     try:
-        fields = event.get('body')
+        fields = json.loads(event.get('body', '{}'))
         goal_id = sanitize_id(fields.get('goal_id'))
 
         # This sends a full request, not just the changes

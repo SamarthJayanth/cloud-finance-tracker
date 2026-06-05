@@ -23,7 +23,7 @@ def lambda_handler(event, context):
     #    }
     #  } 
     try:
-        fields = event.get('body')
+        fields = json.loads(event.get('body', '{}'))
         description = sanitize_description(fields.get('description')) if fields.get('description') else None
         start_date = sanitize_date(fields.get('start_date'))
         end_date = sanitize_date(fields.get('end_date'), allow_future = True)

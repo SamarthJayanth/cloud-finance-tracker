@@ -22,7 +22,7 @@ def lambda_handler(event, context):
     #    }
     #  } 
     try:
-        fields = event.get('body')
+        fields = json.loads(event.get('body', '{}'))
         goals = get_goals(
         user_id = sanitize_id(event['requestContext']['authorizer']['claims']['sub']),
         name = sanitize_name(fields.get('name')) if fields.get('name') else None,

@@ -17,7 +17,7 @@ def lambda_handler(event, context):
     #    }
     #  } 
     try:
-        fields = event.get('body')
+        fields = json.loads(event.get('body', '{}'))
         user_id = sanitize_id(event['requestContext']['authorizer']['claims']['sub'])
         end_date = str(date.today())
         start_date = str(date.today().replace(day = 1))
