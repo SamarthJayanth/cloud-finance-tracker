@@ -27,6 +27,7 @@ def lambda_handler(event, context):
         delete_budget(user_id, budget_id)
         return {
             'statusCode': 201,
+            'headers': {'Access-Control-Allow-Origin': '*'},
             'body': json.dumps({
                 'message': 'Budget deleted successfully',
             })

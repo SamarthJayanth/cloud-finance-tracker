@@ -38,6 +38,8 @@ def lambda_handler(event, context):
         total_income = get_total_income(user_id = user_id, **kwargs)
         total_expense = get_total_expenses(user_id = user_id, **kwargs)
         return {
+            'statusCode': 201,
+            'headers': {'Access-Control-Allow-Origin': '*'},
             'body': json.dumps({
                 'total_savings': total_income-total_expense,
                 'period': {'start_date': start_date, 'end_date': end_date}

@@ -39,6 +39,7 @@ def lambda_handler(event, context):
 
         return {
             'statusCode': 201,
+            'headers': {'Access-Control-Allow-Origin': '*'},
             'body': json.dumps({
                 'message': 'Expense edited successfully',
                 'expense': expense

@@ -41,10 +41,11 @@ def lambda_handler(event, context) :
         add_expense(expense)
         return {
             'statusCode': 201,
+            'headers': {'Access-Control-Allow-Origin': '*'},
             'body': json.dumps({
                 'message': 'Expense added successfully',
                 'expense_id': expense.get('expense_id')
-            }, cls = DecimalEncoder)
+            }, cls=DecimalEncoder)
         }
         #Save to Database
         # try:

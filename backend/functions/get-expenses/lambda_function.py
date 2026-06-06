@@ -32,7 +32,8 @@ def lambda_handler(event, context):
         end_date = sanitize_date(fields.get('end_date')) if fields.get('end_date') else None
         )
         return {
-            'statusCode': 200,
+            'statusCode': 201,
+            'headers': {'Access-Control-Allow-Origin': '*'},
             'body': json.dumps({
             'expenses': expenses, # Need to convert from decimal to float
             'count': len(expenses)

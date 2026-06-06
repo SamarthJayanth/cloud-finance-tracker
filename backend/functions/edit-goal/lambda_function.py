@@ -48,6 +48,7 @@ def lambda_handler(event, context):
         edit_goal(goal)
         return {
             'statusCode': 201,
+            'headers': {'Access-Control-Allow-Origin': '*'},
             'body': json.dumps({
                 'message': 'Goal edited successfully',
                 'goal': goal

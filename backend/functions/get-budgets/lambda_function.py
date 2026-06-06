@@ -37,10 +37,11 @@ def lambda_handler(event, context):
         is_recurring = sanitize_is_recurring(fields.get('is_recurring')) if fields.get('is_recurring') else None,
         )
         return {
-            'statusCode': 200,
+            'statusCode': 201,
+            'headers': {'Access-Control-Allow-Origin': '*'},
             'body': json.dumps({
-            'budgets': budgets, # Need to convert from decimal to float
-            'count': len(budgets)
+                'budgets': budgets, # Need to convert from decimal to float
+                'count': len(budgets)
         }, cls = DecimalEncoder)
     }
     except ValidInputError as e:

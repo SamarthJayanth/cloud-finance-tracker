@@ -34,6 +34,7 @@ def lambda_handler(event, context):
         average = round(expense_sum/(delta_days.days + 1), 2)
         return {
             'statusCode': 201,
+            'headers': {'Access-Control-Allow-Origin': '*'},
             'body' : json.dumps({
                 'daily_average': average,
                 'period': {'start_date': start_date, 'end_date': end_date}

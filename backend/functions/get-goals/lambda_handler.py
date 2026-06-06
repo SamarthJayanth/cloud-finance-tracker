@@ -34,7 +34,8 @@ def lambda_handler(event, context):
         )
 
         return {
-            'statusCode': 200,
+            'statusCode': 201,
+            'headers': {'Access-Control-Allow-Origin': '*'},
             'body': json.dumps({
             'goals': goals, # Need to convert from decimal to float
             'count': len(goals)

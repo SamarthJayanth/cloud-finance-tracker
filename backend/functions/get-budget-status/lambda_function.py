@@ -38,6 +38,8 @@ def lambda_handler(event, context):
 
         status = calculate_budget_status(spent, limit, start_date, end_date)
         return {
+            'statusCode': 201,
+            'headers': {'Access-Control-Allow-Origin': '*'},
                 'body': json.dumps({
                     'user_id': event['requestContext']['authorizer']['claims']['sub'],
                     'budget_id':   budget_id,

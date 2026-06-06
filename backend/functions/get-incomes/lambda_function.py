@@ -33,7 +33,8 @@ def lambda_handler(event, context):
         period = sanitize_period(fields.get('period')) if fields.get('period') else None
         )
         return {
-            'statusCode': 200,
+            'statusCode': 201,
+            'headers': {'Access-Control-Allow-Origin': '*'},
             'body': json.dumps({
             'incomes': incomes, # Need to convert from decimal to float
             'count': len(incomes)

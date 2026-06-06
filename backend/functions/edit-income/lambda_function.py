@@ -39,6 +39,7 @@ def lambda_handler(event, context):
         edit_income(income)
         return {
             'statusCode': 201,
+            'headers': {'Access-Control-Allow-Origin': '*'},
             'body': json.dumps({
                 'message': 'Income edited successfully',
                 'income': income

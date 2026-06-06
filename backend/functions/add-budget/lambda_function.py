@@ -41,7 +41,8 @@ def lambda_handler(event, context):
         }
         add_budget(budget)
         return {
-            'statusCode': 200,
+            'statusCode': 201,
+            'headers': {'Access-Control-Allow-Origin': '*'},
             'body': json.dumps({
                 'message': 'Budget added successfully',
                 'budget_id': budget.get('budget_id')

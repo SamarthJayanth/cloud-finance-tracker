@@ -26,6 +26,7 @@ def lambda_handler(event, context):
         delete_income(user_id, income_id)
         return {
             'statusCode': 201,
+            'headers': {'Access-Control-Allow-Origin': '*'},
             'body': json.dumps({
                 'message': 'Income deleted successfully',
             })

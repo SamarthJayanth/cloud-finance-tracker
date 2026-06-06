@@ -24,6 +24,8 @@ def lambda_handler(event, context):
         total_expenses = get_total_expenses(user_id = user_id,start_date = start_date, end_date = end_date)
         total_income = get_total_income(user_id = user_id, start_date = start_date, end_date = end_date)
         return {
+            'statusCode': 201,
+            'headers': {'Access-Control-Allow-Origin': '*'},
             'body': json.dumps({
                 'month': date.today().month,
                 'amount_spent': total_expenses,

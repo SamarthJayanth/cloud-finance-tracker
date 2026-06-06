@@ -27,6 +27,7 @@ def lambda_handler(event, context):
         delete_goal(user_id, goal_id)
         return {
             'statusCode': 201,
+            'headers': {'Access-Control-Allow-Origin': '*'},
             'body': json.dumps({
                 'message': 'Goal deleted successfully',
             })

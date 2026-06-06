@@ -43,6 +43,7 @@ def lambda_handler(event, context):
         add_goal(goal)
         return {
             'statusCode': 201,
+            'headers': {'Access-Control-Allow-Origin': '*'},
             'body': json.dumps({
                 'message': 'Goal added successfully',
                 'goal_id': goal.get('goal_id')

@@ -43,6 +43,7 @@ def lambda_handler(event, context):
         edit_budget(budget) # The function verifies the budget exists 
         return {
             'statusCode': 201,
+            'headers': {'Access-Control-Allow-Origin': '*'},
             'body': json.dumps({
                 'message': 'Budget edited successfully',
                 'budget': budget
