@@ -40,6 +40,7 @@ def lambda_handler(event, context):
                     'start_date':  start_date,
                     'end_date':    end_date,
                     'description': goal.get('description'),
+                    'type': goal.get('type'),
                     **status
                 }, cls = DecimalEncoder)
         }

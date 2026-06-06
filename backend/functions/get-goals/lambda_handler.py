@@ -29,7 +29,8 @@ def lambda_handler(event, context):
         min_amount = sanitize_amount(fields.get('min_amount')) if fields.get('min_amount') else None,
         max_amount = sanitize_amount(fields.get('max_amount')) if fields.get('max_amount') else None,
         start_date = sanitize_date(fields.get('start_date')) if fields.get('start_date') else None,
-        end_date = sanitize_date(fields.get('end_date'), allow_future = True) if fields.get('end_date') else None
+        end_date = sanitize_date(fields.get('end_date'), allow_future = True) if fields.get('end_date') else None,
+        goal_type = sanitize_type(fields.get('type'), is_goal = True) if fields.get('type') else None
         )
 
         return {

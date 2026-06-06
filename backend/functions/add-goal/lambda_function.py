@@ -20,6 +20,7 @@ def lambda_handler(event, context):
     #       'start_date': 'str'
     #       'end_date': 'str'
     #       'description': 'str' optional
+    #       'type': 'str'
     #    }
     #  } 
     try:
@@ -36,6 +37,7 @@ def lambda_handler(event, context):
             'start_date': start_date,
             'end_date': end_date,
             'description': description,
+            'type': sanitize_type(fields.get('type'), is_goal = True),
             'goal_id': sanitize_id(str(uuid.uuid4()))
         }
         add_goal(goal)

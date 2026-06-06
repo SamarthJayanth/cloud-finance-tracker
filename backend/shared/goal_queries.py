@@ -24,7 +24,7 @@ def get_goal_by_id(user_id: str, goal_id: str) -> dict | None:
         raise DataBaseError('Failed to get goal')
     
 def get_goals(user_id: str, name: str = None, start_date: str = None, end_date: str = None,
-                 min_amount: float = None, max_amount: float = None):
+                 goal_type: str = None, min_amount: float = None, max_amount: float = None, ):
     # Returns list of expense records matching filters
     if start_date is None:
         start_date = earliest_date
@@ -34,6 +34,8 @@ def get_goals(user_id: str, name: str = None, start_date: str = None, end_date: 
         filter_expr = Attr('start_date').between(start_date, end_date) | Attr('end_date').between(start_date, end_date)
         if name:
             filter_expr = filter_expr & Attr('name').eq(name)
+        if goal_type:
+            filter_expr = filter_expr & Attr('type').eq(goal_type)
         if min_amount is not None: # Evaluate here because min amt could be 0
             filter_expr = filter_expr & Attr('amount').gt(min_amount)
         if max_amount is not None: 
