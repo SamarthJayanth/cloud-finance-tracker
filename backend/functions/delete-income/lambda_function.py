@@ -16,7 +16,7 @@ def lambda_handler(event, context):
     #    }
     #  } 
     try:
-        fields = json.loads(event.get('body', '{}'))
+        fields = json.loads(event.get('body') or '{}')
         user_id = sanitize_id(event['requestContext']['authorizer']['claims']['sub'])
         income_id = sanitize_id(fields.get('income_id'))
         # Need id to get the actual income id
@@ -32,8 +32,13 @@ def lambda_handler(event, context):
             })
         }
     except ValidInputError as e:
+        print(f'ValidInputError: {str(e)}')
         return {'body': json.dumps({'error': str(e)})}
     except DataBaseError as e:
+        print(f'DataBaseError: {str(e)}')
+        return {'body': json.dumps({'error': str(e)})}
+    except NotFoundError as e:
+        print(f'NotFoundError: {str(e)}')
         return {'body': json.dumps({'error': str(e)})}
     except Exception as e:
         print(f'Unexpected error: {str(e)}')

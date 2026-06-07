@@ -15,19 +15,19 @@ def lambda_handler(event, context):
     #   {
     #       'min_amount' : 'num' 
     #       'max_amount': 'num'
-    #       'expense_type': 'str'
+    #       'type': 'str'
     #       'start_date': 'YYYY-MM-DD' default is 2000-01-01
     #       'end_date': 'YYYY-MM-DD' default is current day
     #    }
     #  } 
     try:
-        fields = json.loads(event.get('body', '{}'))
+        fields = json.loads(event.get('body') or '{}')
         expenses = get_expenses(
         user_id = sanitize_id(event['requestContext']['authorizer']['claims']['sub']),
         name = sanitize_name(fields.get('name')) if fields.get('name') else None,
         min_amount = sanitize_amount(fields.get('min_amount')) if fields.get('min_amount') else None,
         max_amount = sanitize_amount(fields.get('max_amount')) if fields.get('max_amount') else None,
-        expense_type = sanitize_type(fields.get('expense_type')) if fields.get('expense_type') else None,
+        expense_type = sanitize_type(fields.get('type')) if fields.get('type') else None,
         start_date = sanitize_date(fields.get('start_date')) if fields.get('start_date') else None,
         end_date = sanitize_date(fields.get('end_date')) if fields.get('end_date') else None
         )
@@ -40,8 +40,10 @@ def lambda_handler(event, context):
         }, cls = DecimalEncoder)
     }
     except ValidInputError as e:
+        print(f'ValidInputError: {str(e)}')
         return {'body': json.dumps({'error': str(e)})}
     except DataBaseError as e:
+        print(f'DataBaseError: {str(e)}')
         return {'body': json.dumps({'error': str(e)})}
     except Exception as e:
         print(f'Unexpected error: {str(e)}')

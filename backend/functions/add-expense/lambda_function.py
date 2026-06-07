@@ -27,7 +27,7 @@ def lambda_handler(event, context) :
 
     # fields = json.loads(event.get('body')) for an API call
     try: 
-        fields = json.loads(event.get('body', '{}'))
+        fields = json.loads(event.get('body') or '{}')
         description = sanitize_description(fields.get('description')) if fields.get('description') else None
         expense = {
             'user_id': sanitize_id(event['requestContext']['authorizer']['claims']['sub']),
@@ -61,8 +61,10 @@ def lambda_handler(event, context) :
         #     })
         # }
     except ValidInputError as e:
+        print(f'ValidInputError: {str(e)}')
         return {'body': json.dumps({'error': str(e)})}
     except DataBaseError as e:
+        print(f'DataBaseError: {str(e)}')
         return {'body': json.dumps({'error': str(e)})}
     except Exception as e:
         print(f'Unexpected error: {str(e)}')

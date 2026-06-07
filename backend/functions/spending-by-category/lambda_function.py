@@ -1,9 +1,5 @@
 import json
-import sys
-import os
 from datetime import date
-
-sys.path.append(os.path.join(os.path.dirname(__file__), '../../shared'))
 
 from input_sanitize import *
 from expense_queries import *
@@ -31,8 +27,11 @@ def lambda_handler(event, context):
     #     expenses = get_expenses_by_type({'start_date':start_date,'end_date':end_date,'type':expense_type})
     #     return
     # except ValidInputError as e:
+    #     print(f'ValidInputError: {str(e)}')
     #     return {'body': json.dumps({'error': str(e)})}
     # except DataBaseError as e:
+    #     print(f'DataBaseError: {str(e)}')
     #     return {'body': json.dumps({'error': str(e)})}
-    # except Exception:
+    # except Exception as e:
+    #     print(f'Unexpected error: {str(e)}')
     #     return {'body': json.dumps({'error': 'Internal Server Error'})}

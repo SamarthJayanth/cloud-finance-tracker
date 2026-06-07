@@ -24,7 +24,7 @@ def lambda_handler(event, context):
     #    }
     #  } 
     try:
-        fields = json.loads(event.get('body', '{}'))
+        fields = json.loads(event.get('body') or '{}')
         budget_id = sanitize_id(fields.get('budget_id'))
 
         # This sends a full request, not just the changes
@@ -50,10 +50,13 @@ def lambda_handler(event, context):
             }, cls = DecimalEncoder)
         }
     except NotFoundError as e:
+        print(f'NotFoundError: {str(e)}')
         return {'body': json.dumps({'error': str(e)})}
     except ValidInputError as e:
+        print(f'ValidInputError: {str(e)}')
         return {'body': json.dumps({'error': str(e)})}
     except DataBaseError as e:
+        print(f'DataBaseError: {str(e)}')
         return {'body': json.dumps({'error': str(e)})}
     except Exception as e:
         print(f'Unexpected error: {str(e)}')

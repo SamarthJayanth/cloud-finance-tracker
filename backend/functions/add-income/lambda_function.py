@@ -21,7 +21,7 @@ def lambda_handler(event, context):
     #       }
     # }
     try:
-        fields = json.loads(event.get('body', '{}'))
+        fields = json.loads(event.get('body') or '{}')
 
         period = sanitize_period(fields.get('period'), 'income')
         description = sanitize_description(fields.get('description')) if fields.get('description') else None
@@ -46,10 +46,11 @@ def lambda_handler(event, context):
             }, cls = DecimalEncoder)
         }
     except ValidInputError as e:
+        print(f'ValidInputError: {str(e)}')
         return {'body': json.dumps({'error': str(e)})}
     except DataBaseError as e:
+        print(f'DataBaseError: {str(e)}')
         return {'body': json.dumps({'error': str(e)})}
     except Exception as e:
         print(f'Unexpected error: {str(e)}')
         return {'body': json.dumps({'error': 'Internal Server Error'})}
-    # Save to database

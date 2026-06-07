@@ -19,10 +19,11 @@ def lambda_handler(event, context):
     #       'max_amount': 'num'
     #       'start_date': 'YYYY-MM-DD' default is 2000-01-01
     #       'end_date': 'YYYY-MM-DD' default is current day
+    #       'type': 'str'
     #    }
     #  } 
     try:
-        fields = json.loads(event.get('body', '{}'))
+        fields = json.loads(event.get('body') or '{}')
         goals = get_goals(
         user_id = sanitize_id(event['requestContext']['authorizer']['claims']['sub']),
         name = sanitize_name(fields.get('name')) if fields.get('name') else None,
@@ -42,8 +43,10 @@ def lambda_handler(event, context):
         }, cls = DecimalEncoder)
     }
     except ValidInputError as e:
+        print(f'ValidInputError: {str(e)}')
         return {'body': json.dumps({'error': str(e)})}
     except DataBaseError as e:
+        print(f'DataBaseError: {str(e)}')
         return {'body': json.dumps({'error': str(e)})}
     except Exception as e:
         print(f'Unexpected error: {str(e)}')

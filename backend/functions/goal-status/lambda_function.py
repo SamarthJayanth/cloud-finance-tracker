@@ -22,7 +22,7 @@ def lambda_handler(event, context):
     #   }
     # }
     try:
-        fields = json.loads(event.get('body', '{}'))
+        fields = json.loads(event.get('body') or '{}')
         goal_id = sanitize_id(fields.get('goal_id'))
         user_id = sanitize_id(event['requestContext']['authorizer']['claims']['sub'])
         goal = get_goal_by_id(user_id, goal_id)
@@ -47,8 +47,13 @@ def lambda_handler(event, context):
                 }, cls = DecimalEncoder)
         }
     except ValidInputError as e:
+        print(f'ValidInputError: {str(e)}')
         return {'body': json.dumps({'error': str(e)})}
     except DataBaseError as e:
+        print(f'DataBaseError: {str(e)}')
+        return {'body': json.dumps({'error': str(e)})}
+    except NotFoundError as e:
+        print(f'NotFoundError: {str(e)}')
         return {'body': json.dumps({'error': str(e)})}
     except Exception as e:
         print(f'Unexpected error: {str(e)}')
