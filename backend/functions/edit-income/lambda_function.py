@@ -25,7 +25,7 @@ def lambda_handler(event, context):
     try:
         fields = json.loads(event.get('body') or '{}')
         income_id = sanitize_id(fields.get('income_id'))
-
+        description = sanitize_description(fields.get('description')) if (fields.get('description')) else None
         income = {
             'user_id': sanitize_id(event['requestContext']['authorizer']['claims']['sub']),
             'income_id' : income_id,
@@ -33,7 +33,7 @@ def lambda_handler(event, context):
             'period' : sanitize_period(fields.get('period'), 'income'),
             'name' : sanitize_name(fields.get('name')),
             'start_date' : sanitize_date(fields.get('start_date')),
-            'description': sanitize_description(fields.get('description'))
+            'description': description
         }
 
         edit_income(income)

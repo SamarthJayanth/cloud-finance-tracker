@@ -26,9 +26,9 @@ def lambda_handler(event, context):
             'statusCode': 201,
             'headers': {'Access-Control-Allow-Origin': '*'},
             'body': json.dumps({
-                'month': date.today().month,
-                'amount_spent': total_expenses,
-                'amount_earned': total_income,
+                'month': date.today().strftime('%B %Y'),
+                'total_income': total_income,
+                'total_expenses': total_expenses,
                 'amount_saved': round(total_income - total_expenses, 2) if total_income > total_expenses else 0
             }, cls = DecimalEncoder)
         }
