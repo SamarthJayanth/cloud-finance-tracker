@@ -28,8 +28,8 @@ def sanitize_amount(val):
     return round(amount,2)
     
 allowed_types = {'groceries', 'transport', 'utilities', 'shopping', 'housing', 'entertainment', 'luxuries', 'dining', 'any'}
-# Hardcoded types but will change when integrated with lambda
-def sanitize_type(val):
+allowed_goal_types = {'savings', 'investment', 'purchase', 'debt payoff', 'other'}
+def sanitize_type(val, is_goal = False):
     if(val == None):
         raise ValidInputError('Type cannot be empty') 
     if(not (isinstance(val, str))):
@@ -37,8 +37,12 @@ def sanitize_type(val):
     val = val.strip().lower()
     if (len(val) > 100): # If user adds a custom type
         raise ValidInputError('Type cannot exceed 100 characters')
-    if (not(val in allowed_types)):
-        raise ValidInputError('Type cannot be different than allowed types')
+    if not is_goal:    
+        if (not(val in allowed_types)):
+            raise ValidInputError('Type cannot be different than allowed types')
+    else:
+        if(not (val in allowed_goal_types)):
+            raise ValidInputError('Type cannot be different than allowed types')
     # Need to ensure no special characters
     # Can also have predetermined expense types(user can add them)
     return val
