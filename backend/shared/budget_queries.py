@@ -11,6 +11,14 @@ table = dynamodb.Table('budgets')
 
 earliest_date = '2000-01-01'
 
+def get_all_budgets():
+    try:
+        response = table.scan()
+        return response.get('Items', [])
+    except Exception as e:
+        print(f'DynamoDB error: {str(e)}')
+        raise DataBaseError('Failed to get all budgets')
+
 def get_budgets(user_id, name: str = None, start_date: str = None, end_date: str = None, budget_type: str = None,
                  min_amount: float = None, max_amount: float = None, period: str = None, is_recurring = None):
     # Returns list of budget records matching filters

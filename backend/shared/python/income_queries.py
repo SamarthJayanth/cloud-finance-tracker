@@ -61,10 +61,9 @@ def get_total_yearly_recurring_income(user_id, start_date: str = earliest_date, 
         sum_items = sum_items + item.get('amount')*(income_config.get(item.get('period')))
     return sum_items
 
-def get_recurring_income(user_id):
+def get_recurring_income():
     try:    
-        response = table.query(
-            KeyConditionExpression = Key('user_id').eq(user_id),
+        response = table.scan(
             FilterExpression = Attr('period').ne('one-time')
         )
         return response.get('Items', [])

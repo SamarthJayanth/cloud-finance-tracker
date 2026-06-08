@@ -22,12 +22,11 @@ def is_payment_due(income: dict, date_today):
         case 'monthly': # Today could be the 28th of Feb, but start date could be 31st of a diff month
             return date_today.day == min(start_date.day, days_in_month(date_today.year, date_today.month))
         case 'quarterly':
-            return ((start_date.month - date_today) % 3 == 0) and date_today.day == min(start_date.day, days_in_month(date_today.year, date_today.month))
+            return ((start_date.month - date_today.month) % 3 == 0) and date_today.day == min(start_date.day, days_in_month(date_today.year, date_today.month))
         case 'yearly':
-            return (start_date.month == date_today) and date_today.day == min(start_date.day, days_in_month(date_today.year, date_today.month))
+            return (start_date.month == date_today.month) and date_today.day == min(start_date.day, days_in_month(date_today.year, date_today.month))
         case _:
-            print(f'DynamoDB error')
-            raise DataBaseError('Failed to check payment due')
+            return False
 def lambda_handler(event, context):
     # Triggered to add incomes daily
     # Meant to be triggered by EventBridge
@@ -36,21 +35,20 @@ def lambda_handler(event, context):
     # event = 
     # {
     #    miscellaneous
-    #    user_id: 'str'
     # body = 
     #   {
     #    }
     #  } 
     try:
-        user_id = sanitize_id(event['requestContext']['authorizer']['claims']['sub'])
-        recurring_incomes = get_recurring_income(user_id)
+        recurring_incomes = get_recurring_income()
         date_today = date.today()
         for income in recurring_incomes:
             if(is_payment_due(income, date_today)):
                 add_income({
-                    'user_id': sanitize_id(event['requestContext']['authorizer']['claims']['sub']),
+                    'user_id': income.get('user_id'),
                     'income_id': str(uuid.uuid4()),
                     'name': income.get('name'),
+                    'start_date': str(date.today()),
                     'amount': income.get('amount'),
                     'description': income.get('description'),
                     'period': 'one-time'
