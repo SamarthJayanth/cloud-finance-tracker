@@ -26,7 +26,7 @@ def get_expenses(user_id, name: str = None, start_date: str = None, end_date: st
         filter_expr = Attr('date').between(start_date, end_date)
         if name:
             filter_expr = filter_expr & Attr('name').eq(name)
-        if expense_type:
+        if expense_type and expense_type != 'any':
             filter_expr = filter_expr & Attr('type').eq(expense_type)
         if min_amount is not None: # Evaluate here because min amt could be 0
             filter_expr = filter_expr & Attr('amount').gt(min_amount)

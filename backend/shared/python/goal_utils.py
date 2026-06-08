@@ -19,13 +19,14 @@ def calculate_goal_status(amount_spent, target_savings, income_earned, start_dat
         status = 'on_track'
 
     return {
-        'amount_spent':     round(amount_spent, 2),
-        'percentage_saved':  round(percentage_saved, 2),
-        'days_elapsed':     days_elapsed,
-        'days_remaining':   days_remaining,
-        'days_total':       days_total,
-        'daily_recommended_savings':  round(daily_recommended_savings, 2),
-        'daily_average_savings':    round(daily_average_savings, 2),
-        'projected_savings':  round(projected_savings, 2),
-        'status':           status
+        'amount_spent': round(amount_spent, 2),
+        'target_savings': target_savings,
+        'percentage_saved': round(percentage_saved, 2),
+        'days_elapsed': days_elapsed,
+        'days_remaining': days_remaining,
+        'days_total': days_total,
+        'daily_recommended_savings': round(daily_recommended_savings, 2),
+        'daily_average_savings': round(daily_average_savings, 2),
+        'projected_savings': round(projected_savings, 2),
+        'status': status
     }
