@@ -23,8 +23,7 @@ def lambda_handler(event, context):
     #  }
     try:
         # Retrieve all from database
-        all_budgets = get_budgets()
-        all_budgets_alerts = {}
+        all_budgets = get_all_budgets()
         for budget in all_budgets:
             user_id = budget.get('user_id')
             start_date, end_date = get_current_period(budget)
@@ -44,7 +43,7 @@ def lambda_handler(event, context):
         return {'body': json.dumps({'error': str(e)})}
     except DataBaseError as e:
         print(f'DataBaseError: {str(e)}')
-        return {'body': json.dumps({'error': str(e)})}
+        return {'body': json.dumps({'error': 'A Database error has occurred'})}
     except Exception as e:
         print(f'Unexpected error: {str(e)}')
         return {'body': json.dumps({'error': 'Internal Server Error'})}

@@ -54,8 +54,8 @@ def lambda_handler(event, context):
                     'period': 'one-time'
                 })
     except DataBaseError as e:
-        print(f'Database error: {str(e)}')
-        return {'body': json.dumps({'error': str(e)})}
+        print(f'DataBaseError: {str(e)}')
+        return {'body': json.dumps({'error': 'A Database error has occurred'})}
     except Exception as e:
         print(f'Unexpected error: {str(e)}')
-        return {'body': json.dumps({'error': 'Internal server error'})}
+        return {'body': json.dumps({'error': 'Internal Server Error'})}
