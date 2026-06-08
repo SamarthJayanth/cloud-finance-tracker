@@ -18,7 +18,7 @@ def calculate_goal_status(amount_spent, target_savings, income_earned, start_dat
     else:
         status = 'on_track'
 
-        return {
+    return {
         'amount_spent':     round(amount_spent, 2),
         'percentage_saved':  round(percentage_saved, 2),
         'days_elapsed':     days_elapsed,

@@ -5,7 +5,6 @@ from input_sanitize import *
 from expense_queries import *
 
 def lambda_handler(event, context):
-    pass
     # Retrieves a summary of expenses
     # Retrieves based on type and date
     # Arguments:

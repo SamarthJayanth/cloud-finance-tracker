@@ -17,7 +17,7 @@ def get_goal_by_id(user_id: str, goal_id: str) -> dict | None:
             'user_id': user_id,
             'goal_id': goal_id
         })
-        if goal is None:
+        if goal_id is None:
             raise NotFoundError('Goal not found')
         return response.get('Item')
         # return from goals_table
