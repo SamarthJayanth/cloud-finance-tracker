@@ -1,9 +1,10 @@
 import json
-from datetime import date, datetime, timedelta
+from datetime import date
 
 from input_sanitize import *
-from expense_queries import *
-from income_queries import *
+from expense_queries import get_total_expenses
+from income_queries import get_total_income
+from errors import *
 def lambda_handler(event, context):
     # Returns a report of all expenses in the month
     # Maybe customize to be for any specific month

@@ -1,9 +1,8 @@
-from datetime import datetime, date
 import json
 
 from input_sanitize import *
 from errors import *
-from goal_queries import *
+from goal_queries import edit_goal
 
 def lambda_handler(event, context):
     # Edits the details of a previously made goal

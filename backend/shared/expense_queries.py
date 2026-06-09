@@ -1,8 +1,6 @@
 import boto3
-import json
-from decimal import Decimal # DynamoDB doesn't take float values
 from datetime import date
-from input_sanitize import *
+from errors import *
 from boto3.dynamodb.conditions import Key, Attr
 from botocore.exceptions import ClientError
 dynamodb = boto3.resource('dynamodb', region_name = 'us-east-2')
@@ -46,7 +44,7 @@ def get_total_expenses(user_id, name: str = None, start_date: str = None, end_da
                        expense_type: str = None, min_amount: float = None, max_amount: float = None):
     # Returns single sum — just calls get_expenses and sums
     items = get_expenses(user_id, name, start_date, end_date, expense_type, min_amount, max_amount)
-    return sum(item.get('amount') for item in items)
+    return float(sum(item.get('amount') for item in items))
 def add_expense(expense: dict):
     try:
         table.put_item(Item = expense)

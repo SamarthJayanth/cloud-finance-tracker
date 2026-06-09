@@ -1,7 +1,7 @@
 import json
 from input_sanitize import *
 from errors import *
-from expense_queries import *
+from expense_queries import delete_expense
 
 def lambda_handler(event, context):
     # Deletes an expense from database

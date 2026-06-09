@@ -1,11 +1,10 @@
 import json
-from datetime import datetime, date, timedelta
-from dateutil.relativedelta import relativedelta
 
 from input_sanitize import *
-from budget_queries import *
-from expense_queries import *
-from budget_utils import *
+from budget_queries import get_budget_by_id
+from expense_queries import get_total_expenses
+from budget_utils import get_current_period, calculate_budget_status
+from errors import *
 def lambda_handler(event, context):
     # Receives a budget and determines certain statistics
     # Ensures it is a valid budget, then determines the following:
@@ -34,7 +33,7 @@ def lambda_handler(event, context):
             end_date = end_date,
             expense_type = budget.get('type')
         )
-        limit = budget.get('amount')
+        limit = float(budget.get('amount'))
 
         status = calculate_budget_status(spent, limit, start_date, end_date)
         return {

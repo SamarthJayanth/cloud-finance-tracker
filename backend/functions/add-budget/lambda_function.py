@@ -3,7 +3,7 @@ import uuid
 
 from input_sanitize import *
 from errors import *
-from budget_queries import *
+from budget_queries import add_budget
 def lambda_handler(event, context):
     # Receives input details of a specific budget from user
     # Assigns an id and stores to database

@@ -1,11 +1,8 @@
 import json
-import uuid
-from datetime import date
-from decimal import Decimal # DynamoDB doesn't take float values
 from input_sanitize import * # comes from layer automatically
 from errors import * # comes from layer automatically
-from income_queries import *
-from expense_queries import *
+from income_queries import get_total_income
+from expense_queries import get_total_expenses
 
 
 

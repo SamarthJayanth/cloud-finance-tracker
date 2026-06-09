@@ -1,8 +1,6 @@
 import boto3
-import json
-from decimal import Decimal # DynamoDB doesn't take float values
 from datetime import date
-from input_sanitize import *
+from errors import *
 from boto3.dynamodb.conditions import Key, Attr
 from botocore.exceptions import ClientError
 
@@ -38,7 +36,7 @@ def get_incomes(user_id, name: str = None, start_date: str = None, end_date: str
 def get_total_income(user_id, name:str = None, start_date: str = None, end_date: str = None,
                  min_amount: float = None, max_amount: float = None, period: str = None):
     incomes = get_incomes(user_id, name, start_date, end_date, min_amount, max_amount, period)
-    return sum(income.get('amount') for income in incomes)
+    return float(sum(income.get('amount') for income in incomes))
     
 income_config = {'one-time' : 1, 'weekly' : 52, 'biweekly' : 26, 'monthly' : 12, 'quarterly' : 4, 'yearly' : 1}
 def get_total_yearly_income(user_id, start_date: str = earliest_date, end_date: str = None,
@@ -48,7 +46,7 @@ def get_total_yearly_income(user_id, start_date: str = earliest_date, end_date: 
     sum_items = 0
     for item in items:
         sum_items = sum_items + item.get('amount')*(income_config.get(item.get('period')))
-    return sum_items
+    return float(sum_items)
 
 def get_total_yearly_recurring_income(user_id, start_date: str = earliest_date, end_date: str = None,
                         min_amount: float = None, max_amount: float = None, period: str = None):
@@ -59,7 +57,7 @@ def get_total_yearly_recurring_income(user_id, start_date: str = earliest_date, 
         if(item.get('period') == 'one-time'):
             continue
         sum_items = sum_items + item.get('amount')*(income_config.get(item.get('period')))
-    return sum_items
+    return float(sum_items)
 
 def get_recurring_income():
     try:    

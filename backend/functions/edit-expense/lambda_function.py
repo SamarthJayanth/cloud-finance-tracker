@@ -1,9 +1,8 @@
-from datetime import datetime, date
 import json
 
 from input_sanitize import *
 from errors import *
-from expense_queries import *
+from expense_queries import edit_expense
 def lambda_handler(event, context):
     # Edits a previously added expense
     # Arguments:

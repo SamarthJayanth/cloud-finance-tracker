@@ -1,8 +1,8 @@
-
 import json
 
 from input_sanitize import *
-from goal_queries import *
+from goal_queries import get_goals
+from errors import *
 
 def lambda_handler(event, context):
     # Retrieve goals given certain criteria

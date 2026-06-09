@@ -4,7 +4,7 @@ from datetime import date, datetime
 
 from input_sanitize import *
 from errors import *
-from goal_queries import *
+from goal_queries import add_goal
 def lambda_handler(event, context):
     # Sets a goal for a user to hit 
     # Goal is an amount saved in some time

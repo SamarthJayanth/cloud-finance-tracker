@@ -1,7 +1,8 @@
 import json
 
 from input_sanitize import *
-from expense_queries import *
+from expense_queries import get_expenses
+from errors import *
 
 def lambda_handler(event, context):
     # Retrieve expenses given certain criteria

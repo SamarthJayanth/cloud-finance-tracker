@@ -1,9 +1,9 @@
-from datetime import datetime, date
 import json
 
 from input_sanitize import *
 from errors import *
-from budget_queries import *
+from budget_queries import edit_budget
+
 def lambda_handler(event, context):
     # Edits the details of a previously made budget
     # Arguments:

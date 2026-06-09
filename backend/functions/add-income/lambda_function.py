@@ -3,7 +3,7 @@ import json
 
 from input_sanitize import *
 from errors import *
-from income_queries import *
+from income_queries import add_income
 def lambda_handler(event, context):
     # Adds an income to the database
     # Arguments

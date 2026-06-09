@@ -1,9 +1,9 @@
 import json
-from datetime import datetime, date, timedelta
-from dateutil.relativedelta import relativedelta
+from datetime import datetime, date
 
 from input_sanitize import *
-from expense_queries import *
+from expense_queries import get_total_expenses
+from errors import *
 
 def lambda_handler(event, context):
     # Calculates the daily average spending in a certain time period
@@ -29,7 +29,7 @@ def lambda_handler(event, context):
         if(delta_days.days < 0):
             raise ValidInputError("Start date must be before end date")
         
-        expense_sum = float(get_total_expenses(user_id = user_id, start_date = start_date, end_date = end_date, expense_type = expenses_type))
+        expense_sum = (get_total_expenses(user_id = user_id, start_date = start_date, end_date = end_date, expense_type = expenses_type))
         
         average = round(expense_sum/(delta_days.days + 1), 2)
         return {

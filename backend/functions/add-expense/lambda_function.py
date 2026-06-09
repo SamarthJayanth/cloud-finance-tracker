@@ -1,9 +1,9 @@
 import json
 import uuid
-from decimal import Decimal # DynamoDB doesn't take float values
+
 from input_sanitize import * # comes from layer automatically
 from errors import * # comes from layer automatically
-from expense_queries import *
+from expense_queries import add_expense
 
 # event contains data from the API call
 # Will also authenticate users

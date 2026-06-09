@@ -2,7 +2,8 @@ import json
 from datetime import date
 
 from input_sanitize import *
-from expense_queries import *
+from expense_queries import get_total_expenses
+from errors import *
 
 def lambda_handler(event, context):
     # Retrieves a summary of expenses

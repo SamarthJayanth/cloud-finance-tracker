@@ -1,7 +1,8 @@
 import json
 
 from input_sanitize import *
-from income_queries import *
+from income_queries import get_incomes
+from errors import *
 
 def lambda_handler(event, context):
     # Retrieve goals given certain criteria

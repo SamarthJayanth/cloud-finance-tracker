@@ -1,13 +1,12 @@
 import json
-import math
-from datetime import date, datetime, timedelta
-from dateutil.relativedelta import relativedelta
+from datetime import date
 
 from input_sanitize import *
-from expense_queries import *
-from goal_queries import *
-from goal_utils import *
-from income_queries import *
+from expense_queries import get_total_expenses
+from goal_queries import get_goal_by_id
+from goal_utils import calculate_goal_status
+from income_queries import get_total_income
+from errors import *
 
 def lambda_handler(event, context):
     # Returns total progress statistics to a savings goal
@@ -26,7 +25,7 @@ def lambda_handler(event, context):
         goal_id = sanitize_id(fields.get('goal_id'))
         user_id = sanitize_id(event['requestContext']['authorizer']['claims']['sub'])
         goal = get_goal_by_id(user_id, goal_id)
-        goal_amount = goal.get('amount')
+        goal_amount = float(goal.get('amount'))
         start_date = goal.get('start_date')
         end_date = goal.get('end_date')
         total_income = get_total_income(user_id = user_id, start_date = sanitize_date(start_date), end_date = str(date.today()))

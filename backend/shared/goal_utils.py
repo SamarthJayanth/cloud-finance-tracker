@@ -1,5 +1,4 @@
-from datetime import datetime, date, timedelta
-from dateutil.relativedelta import relativedelta
+from datetime import datetime, date
 
 def calculate_goal_status(amount_spent, target_savings, income_earned, start_date, end_date):
     date_today = date.today()

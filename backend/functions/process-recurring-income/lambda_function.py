@@ -1,6 +1,6 @@
 import json
 from datetime import date, datetime
-from income_queries import *
+from income_queries import get_recurring_income, add_income
 from errors import *
 import uuid
 from calendar import monthrange

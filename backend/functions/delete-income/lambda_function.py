@@ -1,7 +1,7 @@
 import json
 from input_sanitize import *
 from errors import *
-from income_queries import *
+from income_queries import delete_income
 
 def lambda_handler(event, context):
     # Deletes an income from database

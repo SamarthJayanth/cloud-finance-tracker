@@ -1,9 +1,9 @@
 import json
 import boto3
 
-from budget_utils import *
-from expense_queries import *
-from budget_queries import *
+from budget_utils import calculate_budget_status, get_current_period
+from expense_queries import get_total_expenses
+from budget_queries import get_all_budgets
 from errors import *
 
 sns = boto3.client('sns', region_name='us-east-2')
@@ -27,7 +27,9 @@ def lambda_handler(event, context):
         for budget in all_budgets:
             user_id = budget.get('user_id')
             start_date, end_date = get_current_period(budget)
-            total_expenses = float(get_total_expenses(user_id = user_id, start_date = start_date, end_date = end_date))
+            start_date = str(start_date)
+            end_date = str(end_date)
+            total_expenses = (get_total_expenses(user_id = user_id, start_date = start_date, end_date = end_date))
             full_status = calculate_budget_status(total_expenses, budget.get('amount', 0), start_date, end_date)
             if (full_status.get('status') == 'warning'):
                 sns.publish(
