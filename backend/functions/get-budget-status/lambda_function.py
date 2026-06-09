@@ -31,7 +31,7 @@ def lambda_handler(event, context):
             user_id = user_id,
             start_date = start_date,
             end_date = end_date,
-            expense_type = budget.get('type')
+            expense_type = budget.get('type') if budget.get('type') != 'any' else None
         )
         limit = float(budget.get('amount'))
 

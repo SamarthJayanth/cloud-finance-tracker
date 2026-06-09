@@ -26,17 +26,23 @@ def lambda_handler(event, context):
         all_budgets = get_all_budgets()
         for budget in all_budgets:
             user_id = budget.get('user_id')
-            start_date, end_date = get_current_period(budget)
+            try:
+                start_date, end_date = get_current_period(budget)
+            except ValueError:
+                continue
             start_date = str(start_date)
             end_date = str(end_date)
-            total_expenses = (get_total_expenses(user_id = user_id, start_date = start_date, end_date = end_date))
-            full_status = calculate_budget_status(total_expenses, budget.get('amount', 0), start_date, end_date)
-            if (full_status.get('status') == 'warning'):
+            total_expenses = (get_total_expenses(user_id = user_id, start_date = start_date, end_date = end_date, expense_type = budget.get('type')))
+            amount = float(budget.get('amount', 0))
+            full_status = calculate_budget_status(total_expenses, amount, start_date, end_date)
+            print(full_status.get('status'))
+            if (full_status.get('status') == 'warning' or full_status.get('status') == 'exceeded'):
+                print(f"Sending alert for user: {user_id}, budget: {budget.get('name')}, status: {full_status}")
                 sns.publish(
                     TopicArn=topic_arn,
-                    Subject=f'Budget Alert: {budget.get('name')}\n',
+                    Subject=f'Budget Alert: {budget.get('name')}',
                     Message=f'Your budget "{budget.get("name")}" is over 80% used.\n'
-                            f'Spent: ${total_expenses:.2f} of ${float(budget.get("amount", 0)):.2f}\n' 
+                            f'Spent: ${total_expenses:.2f} of ${amount:.2f}\n' 
                             # Use .2f to round and display 2 decimals always
                             f'Period: {start_date} to {end_date}'
                 )
