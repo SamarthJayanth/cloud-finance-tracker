@@ -1,8 +1,6 @@
 import boto3
-import json
-from decimal import Decimal # DynamoDB doesn't take float values
 from datetime import date
-from input_sanitize import *
+from errors import *
 from boto3.dynamodb.conditions import Key, Attr
 from botocore.exceptions import ClientError
 
@@ -58,7 +56,7 @@ def get_total_yearly_budget(user_id, start_date: str = None, end_date: str = Non
     sum_items = 0
     for item in items:
         sum_items = sum_items + item.get('amount')*(budget_config.get(item.get('period')))
-    return sum_items
+    return float(sum_items)
 def add_budget(budget: dict):
     try:
         table.put_item(Item = budget)

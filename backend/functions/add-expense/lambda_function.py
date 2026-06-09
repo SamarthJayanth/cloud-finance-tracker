@@ -32,7 +32,7 @@ def lambda_handler(event, context) :
         expense = {
             'user_id': sanitize_id(event['requestContext']['authorizer']['claims']['sub']),
             'name': sanitize_name(fields.get('name')),
-            'amount': (round(sanitize_amount(fields.get('amount')), 2)),
+            'amount': (sanitize_amount(fields.get('amount'))),
             'type': sanitize_type(fields.get('type')),
             'date': sanitize_date(fields.get('date')),
             'description':description,

@@ -1,8 +1,6 @@
 import boto3
-import json
-from decimal import Decimal # DynamoDB doesn't take float values
 from datetime import date
-from input_sanitize import *
+from errors import *
 from boto3.dynamodb.conditions import Key, Attr
 from botocore.exceptions import ClientError
 

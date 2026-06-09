@@ -30,7 +30,7 @@ def lambda_handler(event, context):
                 'month': date.today().strftime('%B %Y'),
                 'total_income': total_income,
                 'total_expenses': total_expenses,
-                'amount_saved': round(total_income - total_expenses, 2) if total_income > total_expenses else 0
+                'amount_saved': round(total_income - total_expenses, 2)
             }, cls = DecimalEncoder)
         }
     except ValidInputError as e:

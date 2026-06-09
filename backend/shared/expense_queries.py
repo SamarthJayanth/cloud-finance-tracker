@@ -1,6 +1,7 @@
 import boto3
 from datetime import date
 from errors import *
+from decimal import Decimal
 from boto3.dynamodb.conditions import Key, Attr
 from botocore.exceptions import ClientError
 dynamodb = boto3.resource('dynamodb', region_name = 'us-east-2')
@@ -27,9 +28,9 @@ def get_expenses(user_id, name: str = None, start_date: str = None, end_date: st
         if expense_type and expense_type != 'any':
             filter_expr = filter_expr & Attr('type').eq(expense_type)
         if min_amount is not None: # Evaluate here because min amt could be 0
-            filter_expr = filter_expr & Attr('amount').gt(min_amount)
+            filter_expr = filter_expr & Attr('amount').gt(Decimal(str(min_amount)))
         if max_amount is not None: 
-            filter_expr = filter_expr & Attr('amount').lt(max_amount)
+            filter_expr = filter_expr & Attr('amount').lt(Decimal(str(max_amount)))
         response = table.query(
             KeyConditionExpression = Key('user_id').eq(user_id),
             FilterExpression = filter_expr

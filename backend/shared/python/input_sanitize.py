@@ -25,7 +25,7 @@ def sanitize_amount(val):
         raise ValidInputError('Amount must be positive')
     if(amount > 1000000):
         raise ValidInputError('Amount cannot exceed 1,000,000')
-    return round(amount,2)
+    return round(float(amount),2)
     
 allowed_types = {'groceries', 'transport', 'utilities', 'shopping', 'housing', 'entertainment', 'luxuries', 'dining', 'any'}
 allowed_goal_types = {'savings', 'investment', 'purchase', 'debt payoff', 'other'}

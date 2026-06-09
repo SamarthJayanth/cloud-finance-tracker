@@ -1,6 +1,7 @@
 import boto3
 from datetime import date
 from errors import *
+from decimal import Decimal
 from boto3.dynamodb.conditions import Key, Attr
 from botocore.exceptions import ClientError
 
@@ -37,9 +38,9 @@ def get_goals(user_id: str, name: str = None, start_date: str = None, end_date: 
         if goal_type:
             filter_expr = filter_expr & Attr('type').eq(goal_type)
         if min_amount is not None: # Evaluate here because min amt could be 0
-            filter_expr = filter_expr & Attr('amount').gt(min_amount)
+            filter_expr = filter_expr & Attr('amount').gt(Decimal(str(min_amount)))
         if max_amount is not None: 
-            filter_expr = filter_expr & Attr('amount').lt(max_amount)
+            filter_expr = filter_expr & Attr('amount').lt(Decimal(str(max_amount)))
         response = table.query(
             KeyConditionExpression = Key('user_id').eq(user_id),
             FilterExpression = filter_expr

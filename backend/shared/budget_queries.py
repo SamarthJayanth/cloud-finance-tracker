@@ -1,5 +1,6 @@
 import boto3
 from datetime import date
+from decimal import Decimal
 from errors import *
 from boto3.dynamodb.conditions import Key, Attr
 from botocore.exceptions import ClientError
@@ -32,9 +33,9 @@ def get_budgets(user_id, name: str = None, start_date: str = None, end_date: str
         if budget_type is not None:
             filter_expr = filter_expr & Attr('type').eq(budget_type)
         if min_amount is not None: # Evaluate here because min amt could be 0
-            filter_expr = filter_expr & Attr('amount').gt(min_amount)
+            filter_expr = filter_expr & Attr('amount').gt(Decimal(str(min_amount)))
         if max_amount is not None: 
-            filter_expr = filter_expr & Attr('amount').lt(max_amount)
+            filter_expr = filter_expr & Attr('amount').lt(Decimal(str(max_amount)))
         if period is not None:
             filter_expr = filter_expr & Attr('period').eq(period)
         if is_recurring is not None:
