@@ -24,7 +24,7 @@ def lambda_handler(event, context):
         user_id = sanitize_id(event['requestContext']['authorizer']['claims']['sub'])
         start_date = sanitize_date(fields.get('start_date')) if fields.get('start_date') else str(date(2000, 1, 1))
         end_date = sanitize_date(fields.get('end_date')) if fields.get('end_date') else str(date.today())
-        allowed_types = {'groceries', 'transport', 'utilities', 'shopping', 'housing', 'entertainment', 'luxuries', 'dining', 'any'}
+        allowed_types = {'groceries', 'transport', 'utilities', 'shopping', 'housing', 'entertainment', 'luxuries', 'dining', 'other'}
         val_to_return = list()
         for category in allowed_types:
             val_to_return.append({'category': category, 'total': get_total_expenses(user_id = user_id, start_date = start_date, end_date = end_date, expense_type = category)})
