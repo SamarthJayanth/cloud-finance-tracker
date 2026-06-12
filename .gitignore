@@ -148,3 +148,4 @@ vite.config.ts.timestamp-*
 backend/test_aws_services.py
 layer/shared_layer.zip
 backend/shared/shared_layer.zip
+shared/python/
