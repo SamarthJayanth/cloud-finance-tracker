@@ -1,6 +1,6 @@
 from datetime import datetime, date, timedelta
 from dateutil.relativedelta import relativedelta
-
+from errors import *
 
 all_period_config = {'weekly': {'delta_time': 1, 'which_time': 'weeks'},
                     'biweekly': {'delta_time': 2, 'which_time': 'weeks'}, 
@@ -39,7 +39,7 @@ def get_current_period(budget: dict):
         end_date = start_date + delta - timedelta(days=1)
     else:
         if start_date + delta <= date.today():
-            raise ValueError('Budget is expired')
+            raise ExpiredError('Budget is expired')
         end_date = start_date + delta - timedelta(days=1)
 
     return start_date, end_date
@@ -75,7 +75,8 @@ def calculate_budget_status(amount_spent: float, amount_limit: float,
     days_total = (end_date - start_date).days + 1
     days_elapsed = (date_today - start_date).days + 1
     days_remaining = (end_date - date_today).days
-
+    if days_remaining < 0:
+        raise ExpiredError('Budget is expired')
     percentage_used = (amount_spent / amount_limit) * 100 if amount_limit > 0 else 0
     daily_average = amount_spent / days_elapsed if days_elapsed > 0 else 0
     projected_total = daily_average * days_total
