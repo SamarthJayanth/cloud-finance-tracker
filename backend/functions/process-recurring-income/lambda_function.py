@@ -41,21 +41,28 @@ def lambda_handler(event, context):
     #  } 
     try:
         recurring_incomes = get_recurring_income()
-        date_today = date.today()
-        for income in recurring_incomes:
-            if(is_payment_due(income, date_today)):
-                add_income({
-                    'user_id': income.get('user_id'),
-                    'income_id': str(uuid.uuid4()),
-                    'name': income.get('name'),
-                    'start_date': str(date.today()),
-                    'amount': income.get('amount'),
-                    'description': income.get('description'),
-                    'period': 'one-time'
-                })
     except DataBaseError as e:
-        print(f'DataBaseError: {str(e)}')
-        return {'body': json.dumps({'error': 'A Database error has occurred'})}
+        print(f'DataBase error: {str(e)}')
+        raise
     except Exception as e:
         print(f'Unexpected error: {str(e)}')
-        return {'body': json.dumps({'error': 'Internal Server Error'})}
+        raise
+    date_today = date.today()
+    for income in recurring_incomes:
+        if(is_payment_due(income, date_today)):
+            try: 
+                add_income({
+                'user_id': income.get('user_id'),
+                'income_id': str(uuid.uuid4()),
+                'name': income.get('name'),
+                'start_date': str(date.today()),
+                'amount': income.get('amount'),
+                'description': income.get('description'),
+                'period': 'one-time'
+                })
+            except DataBaseError as e:
+                print(f'DataBase error: {str(e)}')
+                continue
+            except Exception as e:
+                print(f'Unexpected error: {str(e)}')
+                continue

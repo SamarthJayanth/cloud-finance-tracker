@@ -39,7 +39,7 @@ def get_current_period(budget: dict):
         end_date = start_date + delta - timedelta(days=1)
     else:
         if start_date + delta <= date.today():
-            raise ValueError('Budget is expired')
+            raise ExpiredError('Budget is expired')
         end_date = start_date + delta - timedelta(days=1)
 
     return start_date, end_date

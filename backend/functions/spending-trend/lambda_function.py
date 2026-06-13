@@ -34,15 +34,15 @@ def lambda_handler(event, context):
             )
             })
         return {
-            'statusCode': 201,
-            'headers': {'Access-Control-Allow-Origin': '*'},
+            'statusCode': 200,
+            'headers': headers,
             'body': json.dumps({
                 'spending_trend': summary
             }, cls = DecimalEncoder)
         }
     except DataBaseError as e:
         print(f'DataBaseError: {str(e)}')
-        return {'body': json.dumps({'error': 'A Database error has occurred'})}
+        return {'statusCode': 502, 'headers': headers, 'body': json.dumps({'error': 'A Database error has occurred'})}
     except Exception as e:
         print(f'Unexpected error: {str(e)}')
-        return {'body': json.dumps({'error': 'Internal Server Error'})}
+        return {'statusCode': 500, 'headers': headers, 'body': json.dumps({'error': 'Internal Server Error'})}

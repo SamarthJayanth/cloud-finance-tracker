@@ -29,18 +29,18 @@ def lambda_handler(event, context):
         for category in allowed_types:
             val_to_return.append({'category': category, 'total': get_total_expenses(user_id = user_id, start_date = start_date, end_date = end_date, expense_type = category)})
         return {
-            'statusCode': 201,
-            'headers': {'Access-Control-Allow-Origin': '*'},
+            'statusCode': 200,
+            'headers': headers,
             'body': json.dumps({
                 'categories': val_to_return 
             }, cls = DecimalEncoder)
         }
     except ValidInputError as e:
         print(f'ValidInputError: {str(e)}')
-        return {'body': json.dumps({'error': str(e)})}
+        return {'statusCode': 400, 'headers': headers, 'body': json.dumps({'error': str(e)})}
     except DataBaseError as e:
         print(f'DataBaseError: {str(e)}')
-        return {'body': json.dumps({'error': 'A Database error has occurred'})}
+        return {'statusCode': 502, 'headers': headers, 'body': json.dumps({'error': 'A Database error has occurred'})}
     except Exception as e:
         print(f'Unexpected error: {str(e)}')
-        return {'body': json.dumps({'error': 'Internal Server Error'})}
+        return {'statusCode': 500, 'headers': headers, 'body': json.dumps({'error': 'Internal Server Error'})}

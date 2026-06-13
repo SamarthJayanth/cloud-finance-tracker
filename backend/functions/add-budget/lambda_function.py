@@ -42,7 +42,7 @@ def lambda_handler(event, context):
         add_budget(budget)
         return {
             'statusCode': 201,
-            'headers': {'Access-Control-Allow-Origin': '*'},
+            'headers': headers,
             'body': json.dumps({
                 'message': 'Budget added successfully',
                 'budget_id': budget.get('budget_id')
@@ -50,10 +50,10 @@ def lambda_handler(event, context):
         }
     except ValidInputError as e:
         print(f'ValidInputError: {str(e)}')
-        return {'body': json.dumps({'error': str(e)})}
+        return {'statusCode': 400, 'headers': headers, 'body': json.dumps({'error': str(e)})}
     except DataBaseError as e:
         print(f'DataBaseError: {str(e)}')
-        return {'body': json.dumps({'error': 'A Database error has occurred'})}
+        return {'statusCode': 502, 'headers': headers, 'body': json.dumps({'error': 'A Database error has occurred'})}
     except Exception as e:
         print(f'Unexpected error: {str(e)}')
-        return {'body': json.dumps({'error': 'Internal Server Error'})}
+        return {'statusCode': 500, 'headers': headers, 'body': json.dumps({'error': 'Internal Server Error'})}

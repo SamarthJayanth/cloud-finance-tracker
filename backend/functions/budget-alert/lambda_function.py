@@ -25,33 +25,28 @@ def lambda_handler(event, context):
         # Retrieve all from database
         all_budgets = get_all_budgets()
         for budget in all_budgets:
-            user_id = budget.get('user_id')
             try:
+                user_id = budget.get('user_id')
                 start_date, end_date = get_current_period(budget)
-            except ValueError:
+                start_date = str(start_date)
+                end_date = str(end_date)
+                total_expenses = (get_total_expenses(user_id = user_id, start_date = start_date, end_date = end_date, expense_type = budget.get('type')))
+                amount = float(budget.get('amount', 0))
+                full_status = calculate_budget_status(total_expenses, amount, start_date, end_date)
+                print(full_status.get('status'))
+                if (full_status.get('status') == 'warning' or full_status.get('status') == 'exceeded'):
+                    print(f"Sending alert for user: {user_id}, budget: {budget.get('name')}, status: {full_status}")
+                    sns.publish(
+                        TopicArn=topic_arn,
+                        Subject=f'Budget Alert: {budget.get('name')}',
+                        Message=f'Your budget "{budget.get("name")}" is over 80% used.\n'
+                                f'Spent: ${total_expenses:.2f} of ${amount:.2f}\n' 
+                                # Use .2f to round and display 2 decimals always
+                                f'Period: {start_date} to {end_date}'
+                    )
+            except (DataBaseError, ExpiredError):
                 continue
-            start_date = str(start_date)
-            end_date = str(end_date)
-            total_expenses = (get_total_expenses(user_id = user_id, start_date = start_date, end_date = end_date, expense_type = budget.get('type')))
-            amount = float(budget.get('amount', 0))
-            full_status = calculate_budget_status(total_expenses, amount, start_date, end_date)
-            print(full_status.get('status'))
-            if (full_status.get('status') == 'warning' or full_status.get('status') == 'exceeded'):
-                print(f"Sending alert for user: {user_id}, budget: {budget.get('name')}, status: {full_status}")
-                sns.publish(
-                    TopicArn=topic_arn,
-                    Subject=f'Budget Alert: {budget.get('name')}',
-                    Message=f'Your budget "{budget.get("name")}" is over 80% used.\n'
-                            f'Spent: ${total_expenses:.2f} of ${amount:.2f}\n' 
-                            # Use .2f to round and display 2 decimals always
-                            f'Period: {start_date} to {end_date}'
-                )
-    except ValidInputError as e:
-        print(f'ValidInputError: {str(e)}')
-        return {'body': json.dumps({'error': str(e)})}
-    except DataBaseError as e:
-        print(f'DataBaseError: {str(e)}')
-        return {'body': json.dumps({'error': 'A Database error has occurred'})}
+    except NotFoundError as e:
+        print(f'NotFoundError: {str(e)}')
     except Exception as e:
         print(f'Unexpected error: {str(e)}')
-        return {'body': json.dumps({'error': 'Internal Server Error'})}

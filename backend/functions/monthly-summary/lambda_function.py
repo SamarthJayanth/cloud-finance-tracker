@@ -24,8 +24,8 @@ def lambda_handler(event, context):
         total_expenses = get_total_expenses(user_id = user_id,start_date = start_date, end_date = end_date)
         total_income = get_total_income(user_id = user_id, start_date = start_date, end_date = end_date)
         return {
-            'statusCode': 201,
-            'headers': {'Access-Control-Allow-Origin': '*'},
+            'statusCode': 200,
+            'headers': headers,
             'body': json.dumps({
                 'month': date.today().strftime('%B %Y'),
                 'total_income': total_income,
@@ -33,12 +33,9 @@ def lambda_handler(event, context):
                 'amount_saved': round(total_income - total_expenses, 2)
             }, cls = DecimalEncoder)
         }
-    except ValidInputError as e:
-        print(f'ValidInputError: {str(e)}')
-        return {'body': json.dumps({'error': str(e)})}
     except DataBaseError as e:
         print(f'DataBaseError: {str(e)}')
-        return {'body': json.dumps({'error': 'A Database error has occurred'})}
+        return {'statusCode': 502, 'headers': headers, 'body': json.dumps({'error': 'A Database error has occurred'})}
     except Exception as e:
         print(f'Unexpected error: {str(e)}')
-        return {'body': json.dumps({'error': 'Internal Server Error'})}
+        return {'statusCode': 500, 'headers': headers, 'body': json.dumps({'error': 'Internal Server Error'})}

@@ -58,11 +58,11 @@ def lambda_handler(event, context):
         # Must send the link token to the user
         return {
             'statusCode': 200,
-            'headers': {'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json'},
+            'headers': headers,
             'body': json.dumps({'link_token': response['link_token']})
         }
     except AppError as e:
-        return {'statusCode': 400, 'headers': {'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json'}, 'body': json.dumps({'error': str(e)})}
+        return {'statusCode': 400, 'headers': headers, 'body': json.dumps({'error': str(e)})}
     except Exception as e:
         print(f'Unexpected error: {str(e)}')
-        return {'statusCode': 500, 'headers': {'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json'}, 'body': json.dumps({'error': 'Internal Server Error'})}
+        return {'statusCode': 500, 'headers': headers, 'body': json.dumps({'error': 'Internal Server Error'})}
