@@ -50,7 +50,7 @@ def lambda_handler(event, context):
                 }, cls = DecimalEncoder)
         }
     except ExpiredError as e:
-        return {'statusCode': 200, 'headers': headers, 'body': json.dumps({{'expired': True, 'message': 'This budget has expired'}})}
+        return {'statusCode': 200, 'headers': headers, 'body': json.dumps({'expired': True, 'message': 'This budget has expired'})}
     except ValidInputError as e:
         print(f'ValidInputError: {str(e)}')
         return {'statusCode': 400, 'headers': headers, 'body': json.dumps({'error': str(e)})}
