@@ -8,7 +8,7 @@ from errors import *
 
 ssm = boto3.client('ssm')
 dynamodb = boto3.resource('dynamodb')
-table = dynamodb.table('plaid-items')
+table = dynamodb.Table('plaid-items')
 
 def get_plaid_credentials():
     client_id = ssm.get_parameter(
@@ -51,7 +51,7 @@ def lambda_handler(event, context):
                 'user_id': user_id,
                 'item_id': item_id,
                 'access_token': access_token,
-                'record_id': str(uuid.uuid4())
+
             })
         except Exception as e:
             print(f'DynamoDB error: {str(e)}')
