@@ -10,6 +10,7 @@ from plaid.model.transactions_sync_request import TransactionsSyncRequest
 from input_sanitize import *
 from expense_queries import add_expense
 from income_queries import add_income
+from errors import *
 
 dynamodb = boto3.resource('dynamodb', region_name = 'us-east-2')
 plaid_items_table = dynamodb.Table('plaid-items')
@@ -54,12 +55,13 @@ def lambda_handler(event, context):
             return {'statusCode': 400, 'headers': headers, 'body': json.dumps({'error': 'Invalid request'})}
         # We use query to allow for multiple bank accounts
         try:    
-            user_response = plaid_items_table.query(KeyConditionExpression = boto3.dynamodb.conditions.Key('user_id').eq(user_id))
-            items = user_response.get('Items', [])
+            user_response = plaid_items_table.get_item(Key = {'user_id':user_id})
+            item = user_response.get('Item')
         except ClientError as e:
             print(f'DynamoDB query error: {str(e)}')
             return {'statusCode': 500, 'headers': headers, 'body': json.dumps({'error': 'Failed to retrieve linked accounts'})}
-        if not items:
+        if not item:
+            print('Item is empty')
             return {'statusCode': 404, 'headers': headers, 'body': json.dumps({'error': 'No linked bank accounts found'})}
         try:    
             client_id, secret = get_plaid_credentials()
@@ -72,7 +74,7 @@ def lambda_handler(event, context):
         except ClientError as e:
             print(f'SSM error retrieving credentials: {str(e)}')
             return {'statusCode': 500, 'headers': headers, 'body': json.dumps({'error': 'Failed to initialize Plaid client'})}
-
+        items = [item] #Just for the for loop
         transactions = list()
         for item in items:
             try:
@@ -98,7 +100,7 @@ def lambda_handler(event, context):
             # We can also bypass this by using the transaction id
             # as a sort key/filter
                 plaid_items_table.update_item(
-                    Key={'user_id': user_id, 'item_id': item['item_id']},
+                    Key={'user_id': user_id},
                     UpdateExpression='SET cursor = :cursor',
                     ExpressionAttributeValues={':cursor': cursor}
                 )
@@ -112,13 +114,13 @@ def lambda_handler(event, context):
         incomes_sync_count = 0
         for transaction in transactions:
             try:
-                amount = transaction.get('amount')
+                amount = transaction.amount
                 if amount >= 0: #This is an expense
-                    category_dict = transaction.get('personal_finance_category') or {}
-                    primary = category_dict.get('primary')
+                    category_dict = transaction.personal_finance_category
+                    primary = category_dict.primary if category_dict else None
                     if primary and primary.lower() == 'rent_and_utilities':
-                        detailed = category_dict.get('detailed') or ''
-                        if(detailed.lower() == 'rent_and_utilities_rent'):
+                        detailed = category_dict.detailed if category_dict else None
+                        if((detailed.lower() or '') == 'rent_and_utilities_rent'):
                             category = 'housing'
                         else:
                             category = 'utilities'
@@ -130,8 +132,8 @@ def lambda_handler(event, context):
                         'user_id': user_id,
                         'amount': Decimal(str(amount)),
                         'type': get_type(category),
-                        'date': transaction.get('date').strftime('%Y-%m-%d'),
-                        'name': sanitize_name(transaction.get('name')),
+                        'date': transaction.date.strftime('%Y-%m-%d'),
+                        'name': sanitize_name(transaction.name),
                         'description': None,
                         'expense_id': str(uuid.uuid4())
                     })
@@ -140,15 +142,15 @@ def lambda_handler(event, context):
                     add_income({
                         'user_id': user_id,
                         'amount': Decimal(str(abs(amount))),
-                        'start_date': transaction.get('date').strftime('%Y-%m-%d'),
-                        'name': sanitize_name(transaction.get('name')),
+                        'start_date': transaction.date.strftime('%Y-%m-%d'),
+                        'name': sanitize_name(transaction.name),
                         'description': None,
                         'period': 'one-time',
                         'income_id': str(uuid.uuid4())
                     })
                     incomes_sync_count += 1
-            except ClientError as e:
-                print(f'Dynamodb error saving transaction {transaction.get("transaction_id")}: {str(e)}')
+            except Exception as e:
+                print(f"Error writing transaction {transaction.transaction_id}: {str(e)}")
                 continue
         return {
             'statusCode': 200,

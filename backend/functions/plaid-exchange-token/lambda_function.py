@@ -3,7 +3,7 @@ import json
 from plaid.api import plaid_api
 from plaid.model.item_public_token_exchange_request import ItemPublicTokenExchangeRequest
 import boto3
-import uuid
+from input_sanitize import *
 from errors import *
 
 ssm = boto3.client('ssm')
@@ -27,7 +27,7 @@ def get_plaid_credentials():
 def lambda_handler(event, context):
     try:
         fields = json.loads(event.get('body') or '{}')
-        public_token = fields.get['public_token']
+        public_token = fields.get('public_token')
         #This is the public token from the user, that was originally sent by plaid
         # We use this public token to exchange it for a secret access token to store for permanent use
         if not public_token:
@@ -41,17 +41,17 @@ def lambda_handler(event, context):
         api_client = plaid.ApiClient(configuration)
         client = plaid_api.PlaidApi(api_client)
         exchange_request = ItemPublicTokenExchangeRequest(
-        public_token = fields.get['public_token']
+        public_token = fields.get('public_token')
         )
         exchange_response = client.item_public_token_exchange(exchange_request)
-        access_token = exchange_response['access_token']
-        item_id = exchange_response['item_id']
+        access_token = exchange_response.access_token
+        item_id = exchange_response.item_id
         try:
             table.put_item(Item = {
                 'user_id': user_id,
                 'item_id': item_id,
                 'access_token': access_token,
-
+                
             })
         except Exception as e:
             print(f'DynamoDB error: {str(e)}')
