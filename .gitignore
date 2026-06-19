@@ -151,3 +151,4 @@ backend/shared/shared_layer.zip
 backend/shared/python/
 
 terraform/.terraform
+terraform/terraform.tfvars

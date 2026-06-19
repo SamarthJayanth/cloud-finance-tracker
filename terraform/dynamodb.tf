@@ -63,7 +63,7 @@ resource "aws_dynamodb_table" "goals" {
   }
 }
 resource "aws_dynamodb_table" "plaid_items" {
-  name           = "plaid_items"
+  name           = "plaid-items"
   billing_mode   = "PAY_PER_REQUEST"
   hash_key       = "user_id"
 
