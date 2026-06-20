@@ -186,8 +186,8 @@ resource "aws_iam_policy" "DynamoDB_QueryItem" {
     ]
   })
 }
-resource "aws_iam_policy" "DynamoDB_ScanItems" {
-  name        = "DynamoDB_ScanItems_tf"
+resource "aws_iam_policy" "DynamoDB_ScanItem" {
+  name        = "DynamoDB_ScanItem_tf"
   path        = "/"
   description = "Allows access to scan items in goals, expenses, budgets, incomes tables"
 
