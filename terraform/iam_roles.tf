@@ -1,3 +1,6 @@
+# This is what we attach to all roles, such that 
+# any future policies we attach to a lambda role
+# They will be assumed
 data "aws_iam_policy_document" "lambda_assume_role" {
   statement {
     actions = ["sts:AssumeRole"]
