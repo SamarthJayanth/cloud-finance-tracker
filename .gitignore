@@ -153,3 +153,4 @@ backend/shared/python/
 terraform/.terraform
 terraform/terraform.tfvars
 terraform/terraform.tfstate
+backend/shared/shared_layer
