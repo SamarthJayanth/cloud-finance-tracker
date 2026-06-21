@@ -249,6 +249,19 @@ resource "aws_iam_role_policy_attachment" "get_budgets_basic_execution" {
   policy_arn = data.aws_iam_policy.lambda_basic_execution.arn
 }
 
+resource "aws_iam_role" "get_expenses" {
+  name               = "get_expenses_tf"
+  assume_role_policy = data.aws_iam_policy_document.lambda_assume_role.json
+}
+resource "aws_iam_role_policy_attachment" "get_expenses_query_item" {
+  role       = aws_iam_role.get_expenses.name
+  policy_arn = aws_iam_policy.DynamoDB_QueryItem.arn
+}
+resource "aws_iam_role_policy_attachment" "get_expenses_basic_execution" {
+  role       = aws_iam_role.get_expenses.name
+  policy_arn = data.aws_iam_policy.lambda_basic_execution.arn
+}
+
 resource "aws_iam_role" "get_goals" {
   name               = "get_goals_tf"
   assume_role_policy = data.aws_iam_policy_document.lambda_assume_role.json
@@ -318,20 +331,20 @@ resource "aws_iam_role_policy_attachment" "plaid_create_link_token_basic_executi
   policy_arn = data.aws_iam_policy.lambda_basic_execution.arn
 }
 
-resource "aws_iam_role" "plaid_exchange_link_token" {
-  name               = "plaid_exchange_link_token_tf"
+resource "aws_iam_role" "plaid_exchange_token" {
+  name               = "plaid_exchange_token_tf"
   assume_role_policy = data.aws_iam_policy_document.lambda_assume_role.json
 }
-resource "aws_iam_role_policy_attachment" "plaid_exchange_link_token_ssm_get_parameter" {
-  role       = aws_iam_role.plaid_exchange_link_token.name
+resource "aws_iam_role_policy_attachment" "plaid_exchange_token_ssm_get_parameter" {
+  role       = aws_iam_role.plaid_exchange_token.name
   policy_arn = aws_iam_policy.SSM_GetParameter.arn
 }
-resource "aws_iam_role_policy_attachment" "plaid_exchange_link_token_basic_execution" {
-  role       = aws_iam_role.plaid_exchange_link_token.name
+resource "aws_iam_role_policy_attachment" "plaid_exchange_token_basic_execution" {
+  role       = aws_iam_role.plaid_exchange_token.name
   policy_arn = data.aws_iam_policy.lambda_basic_execution.arn
 }
-resource "aws_iam_role_policy_attachment" "plaid_exchange_link_token_plaid_put_item" {
-  role       = aws_iam_role.plaid_exchange_link_token.name
+resource "aws_iam_role_policy_attachment" "plaid_exchange_token_plaid_put_item" {
+  role       = aws_iam_role.plaid_exchange_token.name
   policy_arn = aws_iam_policy.DynamoDB_PlaidPutItem.arn
 }
 

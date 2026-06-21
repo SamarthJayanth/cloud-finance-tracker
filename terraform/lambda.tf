@@ -392,18 +392,18 @@ resource "aws_lambda_function" "plaid_create_link_token" {
   layers = [aws_lambda_layer_version.shared_layer.arn]
 }
 
-data "archive_file" "plaid_exchange_link_token" {
+data "archive_file" "plaid_exchange_token" {
   type        = "zip"
   # path.module is the current file path, where this code lives
-  source_dir = "${path.module}/../backend/functions/plaid-exchange-link-token"
-  output_path = "${path.module}/lambda_packages/plaid_exchange_link_token.zip"
+  source_dir = "${path.module}/../backend/functions/plaid-exchange-token"
+  output_path = "${path.module}/lambda_packages/plaid_exchange_token.zip"
 }
-resource "aws_lambda_function" "plaid_exchange_link_token" {
-  filename      = data.archive_file.plaid_exchange_link_token.output_path
-  function_name = "plaid_exchange_link_token_tf"
-  role          = aws_iam_role.plaid_exchange_link_token.arn
+resource "aws_lambda_function" "plaid_exchange_token" {
+  filename      = data.archive_file.plaid_exchange_token.output_path
+  function_name = "plaid_exchange_token_tf"
+  role          = aws_iam_role.plaid_exchange_token.arn
   handler       = "lambda_function.lambda_handler"
-  source_code_hash  = data.archive_file.plaid_exchange_link_token.output_base64sha256
+  source_code_hash  = data.archive_file.plaid_exchange_token.output_base64sha256
   timeout =  30
   runtime = "python3.14"
   layers = [aws_lambda_layer_version.shared_layer.arn]
