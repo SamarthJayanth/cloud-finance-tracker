@@ -6,6 +6,13 @@
 # As there are many resources to be defined for api_gateway
 # We can utilize a for each loop to help define those resources
 
+# This will have the local variables that we can access in our set up
+# This will have the necessary function configuration data
+locals {
+  lambda_funcs = {
+    add_budget = {http_method = "POST", path_name = "add-budget", lambda_func = aws_lambda_function.add_budget}
+  }
+}
 resource "aws_api_gateway_rest_api" "finance_tracker_api_tf" {
   name = "finance-tracker-api-tf"
 }
@@ -29,17 +36,18 @@ resource "aws_api_gateway_stage" "dev" {
 
 resource "aws_api_gateway_deployment" "finance_tracker_deploy_tf" {
   rest_api_id = aws_api_gateway_rest_api.finance_tracker_api_tf.id
+  # We cannot use a for_each loop here
+  # For_each creates multiple of a resource, but we only have one deployment
 
   triggers = {
     # We trigger the deployment if there is any change to any of the specified resources
     # This is done by checking if the hash is different
     redeployment = sha1(jsonencode([
-      aws_api_gateway_resource.add_budget.id,
-      aws_api_gateway_method.add_budget_options.id,
-      aws_api_gateway_integration.add_budget_options.id,
-      aws_api_gateway_method.add_budget_post.id,
-      aws_api_gateway_integration.add_budget_post.id,
-
+      [for k, v in aws_api_gateway_resource.lambda_resources: v.id],
+      [for k, v in aws_api_gateway_method.lambda_resources_options: v.id],
+      [for k, v in aws_api_gateway_integration.lambda_resources_options: v.id],
+      [for k, v in aws_api_gateway_method.lambda_resources_methods: v.id],
+      [for k, v in aws_api_gateway_integration.lambda_resources_methods: v.id],
     ]))
   }
 
@@ -48,51 +56,85 @@ resource "aws_api_gateway_deployment" "finance_tracker_deploy_tf" {
   }
 }
 
-resource "aws_api_gateway_resource" "add_budget" {
+resource "aws_api_gateway_resource" "lambda_resources" {
+  for_each = local.lambda_funcs
   parent_id   = aws_api_gateway_rest_api.finance_tracker_api_tf.root_resource_id
-  path_part   = "add-budget"
+  path_part   = each.value.path_name
   rest_api_id = aws_api_gateway_rest_api.finance_tracker_api_tf.id
 }
 
-resource "aws_api_gateway_method" "add_budget_options" {
+resource "aws_api_gateway_method" "lambda_resources_options" {
   authorization = "NONE"
   http_method   = "OPTIONS"
-  resource_id   = aws_api_gateway_resource.add_budget.id
+  for_each = local.lambda_funcs
+  resource_id   = aws_api_gateway_resource.lambda_resources[each.key].id
   rest_api_id   = aws_api_gateway_rest_api.finance_tracker_api_tf.id
 }
 
-resource "aws_api_gateway_integration" "add_budget_options" {
-  http_method = aws_api_gateway_method.add_budget_options.http_method
-  resource_id = aws_api_gateway_resource.add_budget.id
+resource "aws_api_gateway_integration" "lambda_resources_options" {
+  for_each = local.lambda_funcs
+  http_method = aws_api_gateway_method.lambda_resources_options[each.key].http_method
+  resource_id = aws_api_gateway_resource.lambda_resources[each.key].id
   rest_api_id = aws_api_gateway_rest_api.finance_tracker_api_tf.id
   type        = "MOCK"
 }
 
-resource "aws_api_gateway_method" "add_budget_post" {
+resource "aws_api_gateway_method" "lambda_resources_methods" {
   authorization = "COGNITO_USER_POOLS"
-  http_method   = "POST"
-  resource_id   = aws_api_gateway_resource.add_budget.id
+  for_each = local.lambda_funcs
+  http_method   = each.value.http_method
+  resource_id   = aws_api_gateway_resource.lambda_resources[each.key].id
   rest_api_id   = aws_api_gateway_rest_api.finance_tracker_api_tf.id
   authorizer_id    = aws_api_gateway_authorizer.cognito_authorizer_tf.id
 }
 
-resource "aws_api_gateway_integration" "add_budget_post" {
-  http_method = aws_api_gateway_method.add_budget_options.http_method
-  resource_id = aws_api_gateway_resource.add_budget.id
+resource "aws_api_gateway_integration" "lambda_resources_methods" {
+  for_each = local.lambda_funcs
+  http_method = aws_api_gateway_method.lambda_resources_methods[each.key].http_method
+  resource_id = aws_api_gateway_resource.lambda_resources[each.key].id
   rest_api_id = aws_api_gateway_rest_api.finance_tracker_api_tf.id
-  integration_http_method = "POST"
+  integration_http_method = each.value.http_method
   type                    = "AWS_PROXY"
-  uri                     = aws_lambda_function.add_budget.invoke_arn
+  uri                     = each.value.lambda_func.invoke_arn
 }
 
-resource "aws_lambda_permission" "add_budget_apigw" {
-  statement_id  = "AllowExecutionFromAPIGateway"
+resource "aws_lambda_permission" "lambda_functions_apigw" {
+  for_each = local.lambda_funcs
+  statement_id  = "AllowExecutionFromAPIGateway-${each.key}"
   action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.add_budget.function_name
+  function_name = each.value.lambda_func.function_name
   principal     = "apigateway.amazonaws.com"
 # Source arn from aws documentation for api gateway
   source_arn = "${aws_api_gateway_rest_api.finance_tracker_api_tf.execution_arn}/*/*"
 
   }
 
+resource "aws_api_gateway_method_response" "lambda_resources_options" {
+  for_each = local.lambda_funcs
+  rest_api_id = aws_api_gateway_rest_api.finance_tracker_api_tf.id
+  resource_id = aws_api_gateway_resource.lambda_resources[each.key].id
+  http_method = aws_api_gateway_method.lambda_resources_options[each.key].http_method
+  status_code = "200"
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Headers" = true
+    "method.response.header.Access-Control-Allow-Methods" = true
+    "method.response.header.Access-Control-Allow-Origin"  = true
+  }
+}
+
+resource "aws_api_gateway_integration_response" "lambda_resources_options" {
+  for_each = local.lambda_funcs
+  
+  rest_api_id = aws_api_gateway_rest_api.finance_tracker_api_tf.id
+  resource_id = aws_api_gateway_resource.lambda_resources[each.key].id
+  http_method = aws_api_gateway_method.lambda_resources_options[each.key].http_method
+  status_code = aws_api_gateway_method_response.lambda_resources_options[each.key].status_code
+
+   response_parameters = {
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,Authorization'"
+    "method.response.header.Access-Control-Allow-Methods" = "'${each.value.http_method},OPTIONS'"
+    "method.response.header.Access-Control-Allow-Origin"  = "'*'"
+  } 
+}
 

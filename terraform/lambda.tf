@@ -5,6 +5,10 @@
 # Package the Lambda function code
 # And assign the role and configuration details of the function
 
+# We are able to use a for_each loop here for all the functions
+# As lambda functions require minimal set up, we did not use that here
+# However, for apigateway, we used a for_each loop as those require a much more comprehensive setup
+
 data "archive_file" "shared_layer" {
   type        = "zip"
   source_dir  = "${path.module}/../backend/shared/shared_layer"
