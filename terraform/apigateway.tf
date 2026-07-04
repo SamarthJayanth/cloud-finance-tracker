@@ -11,6 +11,31 @@
 locals {
   lambda_funcs = {
     add_budget = {http_method = "POST", path_name = "add-budget", lambda_func = aws_lambda_function.add_budget}
+    add_expense = {http_method = "POST", path_name = "add-expense", lambda_func = aws_lambda_function.add_expense}
+    add_goal = {http_method = "POST", path_name = "add-goal", lambda_func = aws_lambda_function.add_goal}
+    add_income = {http_method = "POST", path_name = "add-income", lambda_func = aws_lambda_function.add_income}
+    budget_alert = {http_method = "POST", path_name = "budget-alert", lambda_func = aws_lambda_function.budget_alert}
+    daily_average = {http_method = "POST", path_name = "daily-average", lambda_func = aws_lambda_function.daily_average}
+    delete_budget = {http_method = "DELETE", path_name = "delete-budget", lambda_func = aws_lambda_function.delete_budget}
+    delete_expense = {http_method = "DELETE", path_name = "delete-expense", lambda_func = aws_lambda_function.delete_expense}
+    delete_goal = {http_method = "DELETE", path_name = "delete-goal", lambda_func = aws_lambda_function.delete_goal}
+    delete_income = {http_method = "DELETE", path_name = "delete-income", lambda_func = aws_lambda_function.delete_income}
+    edit_budget = {http_method = "PATCH", path_name = "edit-budget", lambda_func = aws_lambda_function.edit_budget}
+    edit_expense = {http_method = "PATCH", path_name = "edit-expense", lambda_func = aws_lambda_function.edit_expense}
+    edit_goal = {http_method = "PATCH", path_name = "edit-goal", lambda_func = aws_lambda_function.edit_goal}
+    edit_income = {http_method = "PATCH", path_name = "edit-income", lambda_func = aws_lambda_function.edit_income}
+    get_budget_status = {http_method = "POST", path_name = "get-budget-status", lambda_func = aws_lambda_function.get_budget_status}
+    get_budgets = {http_method = "POST", path_name = "get-budgets", lambda_func = aws_lambda_function.get_budgets}
+    get_expenses = {http_method = "POST", path_name = "get-expenses", lambda_func = aws_lambda_function.get_expenses}
+    get_goals = {http_method = "POST", path_name = "get-goals", lambda_func = aws_lambda_function.get_goals}
+    goal_status = {http_method = "POST", path_name = "goal-status", lambda_func = aws_lambda_function.goal_status}
+    monthly_summary = {http_method = "POST", path_name = "monthly-summary", lambda_func = aws_lambda_function.monthly_summary}
+    plaid_create_link_token = {http_method = "POST", path_name = "plaid-create-link-token", lambda_func = aws_lambda_function.plaid_create_link_token}
+    plaid_exchange_token = {http_method = "POST", path_name = "plaid-exchange-token", lambda_func = aws_lambda_function.plaid_exchange_token}
+    plaid_sync_transactions = {http_method = "POST", path_name = "plaid-sync-transactions", lambda_func = aws_lambda_function.plaid_sync_transactions}
+    savings_calculator = {http_method = "POST", path_name = "savings-calculator", lambda_func = aws_lambda_function.savings_calculator}
+    spending_by_category = {http_method = "POST", path_name = "spending-by-category", lambda_func = aws_lambda_function.spending_by_category}
+    spending_trend = {http_method = "POST", path_name = "spending-trend", lambda_func = aws_lambda_function.spending_trend}
   }
 }
 resource "aws_api_gateway_rest_api" "finance_tracker_api_tf" {
@@ -93,7 +118,7 @@ resource "aws_api_gateway_integration" "lambda_resources_methods" {
   http_method = aws_api_gateway_method.lambda_resources_methods[each.key].http_method
   resource_id = aws_api_gateway_resource.lambda_resources[each.key].id
   rest_api_id = aws_api_gateway_rest_api.finance_tracker_api_tf.id
-  integration_http_method = each.value.http_method
+  integration_http_method = "POST" # API Gateway invokes with a POST, even if the integration method is different
   type                    = "AWS_PROXY"
   uri                     = each.value.lambda_func.invoke_arn
 }
