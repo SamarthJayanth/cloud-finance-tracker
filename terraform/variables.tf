@@ -14,3 +14,7 @@ variable "plaid_secret" {
   type = string
   sensitive = true
 }
+variable "budget_alert_email" {
+  type = string
+  sensitive   = true
+}
